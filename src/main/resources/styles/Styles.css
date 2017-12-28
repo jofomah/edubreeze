@@ -1,0 +1,19 @@
+.button {
+    -fx-font-weight: bold;
+}
+
+.header-bg {
+    -fx-background-color: #87CEFA;
+}
+
+.footer-bg {
+    -fx-background-color: #87CEFA;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.login-bg {
+    -fx-background-image: url("../images/login-body-bg.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover;
+}

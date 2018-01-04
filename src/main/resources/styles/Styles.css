@@ -17,3 +17,11 @@
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover;
 }
+
+.app-bg {
+    -fx-background-color: #FFFFFF;
+}
+
+.save-btn {
+    -fx-background-color: #87CEFA;
+}

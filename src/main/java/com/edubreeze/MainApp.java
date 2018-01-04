@@ -14,7 +14,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/LoginScreen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
 
         // System.out.println("javafx.runtime.version: " + System.getProperties().get("javafx.runtime.version"));
 

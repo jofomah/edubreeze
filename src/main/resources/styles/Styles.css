@@ -25,3 +25,8 @@
 .save-btn {
     -fx-background-color: #87CEFA;
 }
+
+.section-title {
+    -fx-border-color: #87CEFA;
+    -fx-padding-top: 10, 0, 10, 0;
+}

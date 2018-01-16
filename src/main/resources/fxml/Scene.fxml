@@ -10,6 +10,6 @@
         <fx:include source="Footer.fxml" />
     </bottom>
    <center>
-       <fx:include source="./staff/StaffProfessionalBackground.fxml" />
+       <fx:include source="./student/StudentBiometric.fxml" />
    </center>
 </BorderPane>

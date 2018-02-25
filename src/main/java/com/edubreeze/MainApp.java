@@ -1,27 +1,44 @@
 package com.edubreeze;
 
+import com.edubreeze.database.DatabaseConnectionInterface;
+import com.edubreeze.database.H2DatabaseConnection;
+import com.edubreeze.database.TableSchemaManager;
+import com.edubreeze.model.State;
+import com.edubreeze.utils.Util;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.jdbc.JdbcConnectionSource;
+import com.j256.ormlite.table.TableUtils;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.geometry.Rectangle2D;
+import com.edubreeze.config.AppConfiguration;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/Scene.fxml"));
 
-        // System.out.println("javafx.runtime.version: " + System.getProperties().get("javafx.runtime.version"));
+        String loginScreenPath = AppConfiguration.LOGIN_SCREEN_PATH;
+        String mainStyleSheetPath = AppConfiguration.MAIN_STYLESHEET_PATH;
+
+        Parent root = FXMLLoader.load(getClass().getResource(loginScreenPath));
+
+        System.out.println("javafx.runtime.version: " + System.getProperties().get("javafx.runtime.version"));
 
         Scene scene = new Scene(root);
-        scene.getStylesheets().add("/styles/Styles.css");
-        
-        stage.setTitle("EduBreeze - Easy to use Biometric Education Management Information System");
+        scene.getStylesheets().add(mainStyleSheetPath);
+
+        stage.setTitle(AppConfiguration.APP_TITLE);
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();
@@ -44,7 +61,32 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        boolean hasLoadedConfig = false;
+        try {
+            // load app configuration file
+            AppConfiguration.init();
+
+            hasLoadedConfig = true;
+
+        } catch (Exception ex) {
+            String title = "Exception Error Dialog";
+            String headerText = "Load Application Config File Error!";
+            Util.showExceptionDialogBox(ex, title, headerText);
+        }
+
+        try {
+            DatabaseConnectionInterface dbConnection = new H2DatabaseConnection(AppConfiguration.getDatabaseFileUrl());
+            TableSchemaManager tableSchemaManager = new TableSchemaManager();
+            tableSchemaManager.initDatabase(dbConnection);
+
+        } catch (SQLException ex) {
+            Util.showExceptionDialogBox(ex, "Database Setup Error", "An error occurred while initializing app database.");
+        }
+
+        // load app GUI
+        if (hasLoadedConfig) {
+            launch(args);
+        }
     }
 
 }

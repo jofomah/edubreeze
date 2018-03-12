@@ -6,7 +6,7 @@ import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.model.User;
 import com.edubreeze.net.ClientInterface;
 import com.edubreeze.net.exceptions.ApiClientException;
-import com.edubreeze.net.exceptions.WrongLoginCredentialsException;
+import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -18,11 +18,21 @@ public class LoginService {
 
     private ClientInterface apiClient;
 
+    private static User currentLoggedInUser = null;
+
     public LoginService(ClientInterface apiClient) {
         this.apiClient = apiClient;
     }
 
-    public String login(String email, String password) throws ApiClientException, MissingRequiredCredentialsException {
+    public static User getCurrentLoggedInUser() {
+        return currentLoggedInUser;
+    }
+
+    public static void setCurrentLoggedInUser(User user) {
+        currentLoggedInUser = user;
+    }
+
+    public String login(String email, String password) throws ApiClientException, MissingRequiredCredentialsException, WrongLoginCredentialsException {
 
         if(email == null || email.isEmpty()) {
             throw new MissingRequiredCredentialsException("Username is either not set or is empty, username: " + email);

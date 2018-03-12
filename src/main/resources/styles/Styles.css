@@ -34,3 +34,8 @@
 .biometric-section {
     -fx-border-color: #87CEFA;
 }
+
+.loading-indicator-main {
+    -fx-background-image: url("../images/loading-progress-indicator.gif");
+    -fx-background-repeat: no-repeat;
+}

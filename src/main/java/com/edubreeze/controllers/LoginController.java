@@ -1,22 +1,15 @@
 package com.edubreeze.controllers;
 
 import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.database.DatabaseConnectionInterface;
-import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.model.User;
 import com.edubreeze.net.ApiClient;
-import com.edubreeze.net.exceptions.ApiClientException;
-import com.edubreeze.net.exceptions.WrongLoginCredentialsException;
+import com.edubreeze.service.ApplicationService;
+import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import com.edubreeze.service.LoginService;
 import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
+import com.edubreeze.service.tasks.LoginTask;
 import com.edubreeze.utils.Util;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -29,7 +22,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -46,31 +38,109 @@ public class LoginController implements Initializable {
     @FXML
     private Button loginButton;
 
+    private LoginService loginService;
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        loginService = new LoginService(new ApiClient());
     }
 
     @FXML
     private void handleLoginButtonClick(MouseEvent event) {
-        LoginTask loginTask = new LoginTask(usernameField, passwordField, loginButton);
 
-        loginTask.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+        final ContentDisplay loginBtnContentDisplay = loginButton.getContentDisplay();
+        final String loginBtnText = loginButton.getText();
+        final Node loginIconImage = loginButton.getGraphic();
 
-            @Override
-            public void handle(WorkerStateEvent t) {
-                System.out.println("done:" + t.getSource().getValue());
+        disableLoginForm();
+
+        LoginTask loginTask = new LoginTask(getUsername(), getPassword(), loginService);
+
+        /**
+         * set login success callback
+         */
+        loginTask.setOnSucceeded(workStateEvent -> {
+            enableLoginForm(loginBtnContentDisplay, loginIconImage, loginBtnText);
+            User loggedInUser = (User) workStateEvent.getSource().getValue();
+
+            ApplicationService appService = new ApplicationService(loggedInUser.getApiToken(), new ApiClient());
+
+            try {
+                Stage screenStage = (Stage) loginButton.getScene().getWindow();
+                if (appService.hasCompletedInitialSync()) {
+                    Util.changeScreen(screenStage, AppConfiguration.STUDENT_LIST_SCREEN);
+                } else {
+                    Util.changeScreen(screenStage, AppConfiguration.LOADING_SCREEN);
+                }
+
+            } catch (SQLException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        AppConfiguration.CHECK_INITIAL_SYNC_ERROR_HEADER,
+                        AppConfiguration.INITIAL_SYNC_STATUS_CHECK_SQL_ERROR
+                );
+
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        AppConfiguration.CHANGE_SCREEN_ERROR_HEADER,
+                        AppConfiguration.CHANGE_SCREEN_ERROR_DETAIL
+                );
+            }
+
+        });
+
+        /**
+         * set login failed callback
+         */
+        loginTask.setOnFailed(workStateEvent -> {
+
+            enableLoginForm(loginBtnContentDisplay, loginIconImage, loginBtnText);
+
+            Throwable throwable = loginTask.getException();
+
+            if (throwable instanceof WrongLoginCredentialsException) {
+                Util.showErrorDialog(
+                        AppConfiguration.LOGIN_ERROR_DIALOG_HEADER,
+                        AppConfiguration.WRONG_USERNAME_AND_PASSWORD,
+                        AppConfiguration.PLEASE_ENTER_CORRECT_CREDENTIALS
+                );
+
+            } else if (throwable instanceof MissingRequiredCredentialsException) {
+                Util.showErrorDialog(
+                        AppConfiguration.LOGIN_ERROR_DIALOG_HEADER,
+                        AppConfiguration.MISSING_LOGIN_CREDENTIALS,
+                        AppConfiguration.PLEASE_ENTER_MISSING_CREDENTIALS
+                );
+
+            } else if (throwable instanceof SQLException) {
+                Util.showErrorDialog(
+                        AppConfiguration.LOGIN_ERROR_DIALOG_HEADER,
+                        AppConfiguration.LOGIN_SQL_ERROR,
+                        AppConfiguration.LOGIN_SQL_ERROR_DETAIL
+                );
             }
         });
 
-        loginTask.start();
-
+        // start login task
+        Thread th = new Thread(loginTask);
+        th.start();
     }
 
-    public static  void disableFormFields(final TextField usernameField, final PasswordField passwordField, final Button loginButton)
-    {
+    private String getUsername() {
+        return usernameField.getText().trim();
+    }
+
+    private String getPassword() {
+        return passwordField.getText().trim();
+    }
+
+    public void disableLoginForm() {
         // update login form
         Platform.runLater(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 usernameField.setEditable(false);
                 passwordField.setEditable(false);
                 loginButton.setDisable(true);
@@ -83,132 +153,24 @@ public class LoginController implements Initializable {
 
                 loginButton.setContentDisplay(ContentDisplay.LEFT);
                 loginButton.setGraphic(loadingIconView);
-                loginButton.setText("Logging in ...");
+                loginButton.setText(AppConfiguration.LOGIN_IN_PROGRESS_TEXT);
             }
         });
     }
 
-    public static void enableFormFields(
-            final TextField usernameField,
-            final PasswordField passwordField,
-            final Button loginButton,
+    public void enableLoginForm(
             final ContentDisplay loginBtnContentDisplay,
             final Node loginBtnImageView,
             final String loginText
     ) {
-        Platform.runLater(new Runnable() {
-            @Override public void run() {
-                usernameField.setEditable(true);
-                passwordField.setEditable(true);
-                loginButton.setDisable(false);
+        Platform.runLater(() -> {
+            usernameField.setEditable(true);
+            passwordField.setEditable(true);
+            loginButton.setDisable(false);
 
-                loginButton.setContentDisplay(loginBtnContentDisplay);
-                loginButton.setGraphic(loginBtnImageView);
-                loginButton.setText(loginText);
-            }
+            loginButton.setContentDisplay(loginBtnContentDisplay);
+            loginButton.setGraphic(loginBtnImageView);
+            loginButton.setText(loginText);
         });
-    }
-
-    private static class LoginTask extends Service<Void> {
-        private TextField usernameField;
-        private PasswordField passwordField;
-        private Button loginButton;
-
-       public LoginTask(TextField usernameField, PasswordField passwordField, Button loginButton)
-       {
-           this.usernameField = usernameField;
-           this.passwordField = passwordField;
-           this.loginButton = loginButton;
-       }
-
-        protected Task<Void> createTask() {
-            final TextField usernameField = this.usernameField;
-            final PasswordField passwordField = this.passwordField;
-            final Button loginButton = this.loginButton;
-            final LoginService loginService = new LoginService(new ApiClient());
-
-            return new Task<Void>() {
-                protected Void call() {
-                    final String username = usernameField.getText();
-                    final String password = passwordField.getText();
-
-                    final ContentDisplay loginBtnContentDisplay = loginButton.getContentDisplay();
-                    final String loginBtnText = loginButton.getText();
-                    final Node loginIconImage = loginButton.getGraphic();
-
-                    LoginController.disableFormFields(usernameField, passwordField, loginButton);
-
-                    try {
-
-                        String apiToken = loginService.login(username, password);
-
-                        // save apiToken to database
-                        User user = loginService.saveValidLogin(username, password, apiToken);
-
-                        Stage stage =(Stage) loginButton.getScene().getWindow();
-
-                        try {
-                            System.out.println("change screen");
-                            Util.changeScreen(stage, AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
-                        } catch (IOException e) {
-                            Util.showExceptionDialogBox(e, "Change Screen Error", "An error occurred while trying to change from Login screen.");
-
-                        }
-
-                    }
-                    catch (SQLException ex) {
-                        Util.showExceptionDialogBox(ex, "Database Error", "An error occurred while interacting with app database.");
-
-                    } catch(MissingRequiredCredentialsException ex) {
-                        Util.showErrorDialog(
-                                "Missing Login Credentials",
-                                "Please enter username and/or password",
-                                "Please enter username and password, then submit to login."
-                        );
-
-                        LoginController.enableFormFields(usernameField, passwordField, loginButton, loginBtnContentDisplay, loginIconImage, loginBtnText);
-
-                    } catch (WrongLoginCredentialsException ex) {
-                        // show login failed message
-                        Util.showErrorDialog(
-                                "Login Failed",
-                                "Wrong username and/or Password.",
-                                "Please try again with correct username and password, if this persists, contact support"
-                        );
-
-                        LoginController.enableFormFields(usernameField, passwordField, loginButton, loginBtnContentDisplay, loginIconImage, loginBtnText);
-
-                    } catch (ApiClientException ex) {
-                        // API connection error, check if user is connected locally.
-                        try {
-                            User user = loginService.loginOffline(username, password);
-                            Stage stage =(Stage) loginButton.getScene().getWindow();
-
-                            System.out.println(AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
-
-                            Util.changeScreen(stage, AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
-
-                        } catch (SQLException e) {
-                            Util.showExceptionDialogBox(ex, "Database Error", "An error occurred while interacting with app database.");
-
-                        } catch (WrongLoginCredentialsException e) {
-                            Util.showErrorDialog(
-                                    "Login Failed",
-                                    "Wrong username and/or Password.",
-                                    "Please try again with correct username and password, if this persists, contact support"
-                            );
-                        } catch (IOException e) {
-                            Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Login screen.");
-
-                        }
-
-                    } finally {
-                        LoginController.enableFormFields(usernameField, passwordField, loginButton, loginBtnContentDisplay, loginIconImage, loginBtnText);
-                    }
-
-                    return null;
-                }
-            };
-        }
     }
 }

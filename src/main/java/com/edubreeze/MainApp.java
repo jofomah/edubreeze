@@ -61,18 +61,6 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        boolean hasLoadedConfig = false;
-        try {
-            // load app configuration file
-            AppConfiguration.init();
-
-            hasLoadedConfig = true;
-
-        } catch (Exception ex) {
-            String title = "Exception Error Dialog";
-            String headerText = "Load Application Config File Error!";
-            Util.showExceptionDialogBox(ex, title, headerText);
-        }
 
         try {
             DatabaseConnectionInterface dbConnection = new H2DatabaseConnection(AppConfiguration.getDatabaseFileUrl());
@@ -84,9 +72,15 @@ public class MainApp extends Application {
         }
 
         // load app GUI
-        if (hasLoadedConfig) {
+        try {
             launch(args);
+        } catch (Exception ex) {
+            Util.showExceptionDialogBox(ex,
+                    "App Launch Error",
+                    "A runtime error occurred."
+            );
         }
+
     }
 
 }

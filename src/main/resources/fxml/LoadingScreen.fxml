@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.edubreeze.controllers.LoadingScreenController">
+    <top>
+        <fx:include source="Header.fxml"/>
+    </top>
+    <bottom>
+        <fx:include source="Footer.fxml"/>
+    </bottom>
+    <center>
+        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" stylesheets="@../styles/Styles.css"
+                      VBox.vgrow="ALWAYS">
+                    <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/loading-progress-indicator.gif"/>
+                            </image>
+                        </ImageView>
+                    </children>
+                </HBox>
+                <Label fx:id="progressText" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308"
+                       text="...." textAlignment="CENTER">
+                    <VBox.margin>
+                        <Insets bottom="50.0" top="20.0"/>
+                    </VBox.margin>
+                </Label>
+                <ProgressBar fx:id="loadingProgressBar" maxWidth="1.7976931348623157E308" progress="0.0">
+                    <VBox.margin>
+                        <Insets top="20.0"/>
+                    </VBox.margin>
+                </ProgressBar>
+
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

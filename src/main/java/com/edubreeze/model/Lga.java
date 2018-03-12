@@ -1,6 +1,8 @@
 package com.edubreeze.model;
 
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -17,6 +19,9 @@ public class Lga {
 
     @DatabaseField(canBeNull = false, foreign = true)
     private State state;
+
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<School> schools;
 
     public Lga() {
         // ORMLite needs a no-arg constructor
@@ -50,6 +55,10 @@ public class Lga {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public ForeignCollection<School> getSchools() {
+        return schools;
     }
 
     @Override

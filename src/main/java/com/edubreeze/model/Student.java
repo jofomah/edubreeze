@@ -1,15 +1,31 @@
 package com.edubreeze.model;
 
+import com.edubreeze.config.AppConfiguration;
+import com.edubreeze.database.DatabaseHelper;
+import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.Where;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 public class Student {
 
-    @DatabaseField(generatedId = true, allowGeneratedIdInsert=true)
+    private static final String UPDATED_AT_COLUMNN_NAME = "updatedAt";
+
+    @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private UUID autoId;
+
+    @DatabaseField(canBeNull = false)
+    private String admissionNumber;
 
     @DatabaseField(canBeNull = false)
     private String firstName;
@@ -24,6 +40,15 @@ public class Student {
     @DatabaseField(canBeNull = false)
     private String currentClass;
 
+    @DatabaseField(canBeNull = false)
+    private String classCategory;
+
+    @DatabaseField
+    private String classSection;
+
+    @DatabaseField(canBeNull = false)
+    private String classSectionType;
+
     @DatabaseField(canBeNull = false, foreign = true)
     private School school;
 
@@ -37,7 +62,7 @@ public class Student {
     private Date dateOfBirth;
 
     @DatabaseField
-    private Date dateEnrolled;
+    private String dateEnrolled;
 
     @DatabaseField
     private String contactPersonName;
@@ -50,6 +75,42 @@ public class Student {
 
     @DatabaseField
     private String religion;
+
+    @DatabaseField
+    private String previousSchool;
+
+    @DatabaseField
+    private String classPassedAtPreviousSchool;
+
+    @DatabaseField
+    private String incomingTransferCertNo;
+
+    @DatabaseField
+    private String outgoingTransferCertNo;
+
+    @DatabaseField
+    private String dateOfLeaving;
+
+    @DatabaseField
+    private String causeOfLeaving;
+
+    @DatabaseField
+    private String occupationAfterLeaving;
+
+    @DatabaseField(canBeNull = false)
+    private String createdBy;
+
+    @DatabaseField(canBeNull = false)
+    private String updatedBy;
+
+    @DatabaseField(canBeNull = false)
+    private Date createdAt;
+
+    @DatabaseField(canBeNull = false)
+    private Date updatedAt;
+
+    @DatabaseField
+    private Date lastSyncedAt;
 
     public Student() {
         // ORMLite needs a no-arg constructor
@@ -119,11 +180,11 @@ public class Student {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Date getDateEnrolled() {
+    public String getDateEnrolled() {
         return dateEnrolled;
     }
 
-    public void setDateEnrolled(Date dateEnrolled) {
+    public void setDateEnrolled(String dateEnrolled) {
         this.dateEnrolled = dateEnrolled;
     }
 
@@ -163,6 +224,219 @@ public class Student {
         return autoId;
     }
 
+    public String getAdmissionNumber() {
+        return admissionNumber;
+    }
+
+    public void setAdmissionNumber(String admissionNumber) {
+        this.admissionNumber = admissionNumber;
+    }
+
+    public String getClassCategory() {
+        return classCategory;
+    }
+
+    public void setClassCategory(String classCategory) {
+        this.classCategory = classCategory;
+    }
+
+    public String getClassSection() {
+        return classSection;
+    }
+
+    public void setClassSection(String classSection) {
+        this.classSection = classSection;
+    }
+
+    public String getClassSectionType() {
+        return classSectionType;
+    }
+
+    public void setClassSectionType(String classSectionType) {
+        this.classSectionType = classSectionType;
+    }
+
+    public String getPreviousSchool() {
+        return previousSchool;
+    }
+
+    public void setPreviousSchool(String previousSchool) {
+        this.previousSchool = previousSchool;
+    }
+
+    public String getClassPassedAtPreviousSchool() {
+        return classPassedAtPreviousSchool;
+    }
+
+    public void setClassPassedAtPreviousSchool(String classPassedAtPreviousSchool) {
+        this.classPassedAtPreviousSchool = classPassedAtPreviousSchool;
+    }
+
+    public String getIncomingTransferCertNo() {
+        return incomingTransferCertNo;
+    }
+
+    public void setIncomingTransferCertNo(String incomingTransferCertNo) {
+        this.incomingTransferCertNo = incomingTransferCertNo;
+    }
+
+    public String getOutgoingTransferCertNo() {
+        return outgoingTransferCertNo;
+    }
+
+    public void setOutgoingTransferCertNo(String outgoingTransferCertNo) {
+        this.outgoingTransferCertNo = outgoingTransferCertNo;
+    }
+
+    public String getDateOfLeaving() {
+        return dateOfLeaving;
+    }
+
+    public void setDateOfLeaving(String dateOfLeaving) {
+        this.dateOfLeaving = dateOfLeaving;
+    }
+
+    public String getCauseOfLeaving() {
+        return causeOfLeaving;
+    }
+
+    public void setCauseOfLeaving(String causeOfLeaving) {
+        this.causeOfLeaving = causeOfLeaving;
+    }
+
+    public String getOccupationAfterLeaving() {
+        return occupationAfterLeaving;
+    }
+
+    public void setOccupationAfterLeaving(String occupationAfterLeaving) {
+        this.occupationAfterLeaving = occupationAfterLeaving;
+    }
+
+    public boolean canSavePersonalInfo() {
+        return (isValidString(admissionNumber) && isValidString(firstName) && isValidString(lastName) && dateOfBirth != null &&
+                isValidString(gender) && isValidString(currentClass) && isValidString(classCategory) && isValidString(classSectionType) &&
+                dateEnrolled != null && isValidString(contactPersonAddress) && state != null && lga != null && isValidString(contactPersonName) &&
+                isValidString(contactPersonPhoneNumber) && isValidString(religion));
+    }
+
+    public void save(User user) throws SQLException {
+        LocalDateTime now = LocalDateTime.now();
+        Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
+        Date currentDateTime = Date.from(instant);
+
+        if (createdAt == null) {
+            setCreatedAt(currentDateTime);
+        }
+
+        // always update "updatedAt"
+        setUpdatedAt(currentDateTime);
+
+        if (createdBy == null) {
+            setCreatedBy(user.getUsername());
+        }
+
+        // always update updatedBy
+        setUpdatedBy(user.getUsername());
+
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+
+        studentDao.createOrUpdate(this);
+    }
+
+    public static List<Student> getAll() throws SQLException {
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+        boolean isAscendingOrder = false;
+        return studentDao.queryBuilder().orderBy(Student.UPDATED_AT_COLUMNN_NAME, isAscendingOrder).query();
+    }
+
+    public static Student find(UUID studentId) throws SQLException {
+        return DatabaseHelper.getStudentDao().queryForId(studentId);
+    }
+
+    public static List<Student> searchBy(State state, Lga lga, School school, String searchKeyword) throws SQLException {
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+
+        if(state == null && lga == null && school == null && (searchKeyword == null || searchKeyword.isEmpty())) {
+            return getAll();
+        }
+
+        QueryBuilder<Student, UUID> queryBuilder = studentDao.queryBuilder();
+        Where<Student, UUID> where = queryBuilder.where();
+
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            // split by space and comma, e.g  "one,   two, three" => [one, two, three]
+            String[] keywords = searchKeyword.split(",\\s*");
+            for (String keyword : keywords) {
+                where.or(
+                        where.like("lastName", "%" + keyword + "%"),
+                        where.like("firstName", "%" + keyword + "%")
+                );
+            }
+        } else {
+            // if keyword is not set, set to all student record, before filtering by school, lga, state in that order.
+            where.isNotNull("autoId");
+        }
+        // https://stackoverflow.com/questions/11118350/how-to-build-query-with-selecting-by-value-of-foreign-objects-field
+
+        if (school != null) {
+            Dao<School, Integer> schoolDao = DatabaseHelper.getSchoolDao();
+            QueryBuilder<School, Integer> schoolQueryBuilder = schoolDao.queryBuilder();
+            schoolQueryBuilder.selectColumns("id");
+            Where<School, Integer> studentWhere = schoolQueryBuilder.where();
+            studentWhere.eq("id", state.getId());
+
+            where.or().in("school_id", schoolQueryBuilder);
+
+            return where.query();
+        }
+
+        return queryBuilder.query();
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public void setUpdatedBy(String updatedBy) {
+        this.updatedBy = updatedBy;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public Date getLastSyncedAt() {
+        return lastSyncedAt;
+    }
+
+    public void setLastSyncedAt(Date lastSyncedAt) {
+        this.lastSyncedAt = lastSyncedAt;
+    }
+
+    private boolean isValidString(String value) {
+        return !(value == null || value.isEmpty());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -173,7 +447,6 @@ public class Student {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(autoId);
     }
 }

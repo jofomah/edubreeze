@@ -8,6 +8,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -356,7 +357,7 @@ public class Student {
     public static List<Student> searchBy(State state, Lga lga, School school, String searchKeyword) throws SQLException {
         Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
 
-        if(state == null && lga == null && school == null && (searchKeyword == null || searchKeyword.isEmpty())) {
+        if (state == null && lga == null && school == null && (searchKeyword == null || searchKeyword.isEmpty())) {
             return getAll();
         }
 
@@ -376,18 +377,45 @@ public class Student {
             // if keyword is not set, set to all student record, before filtering by school, lga, state in that order.
             where.isNotNull("autoId");
         }
-        // https://stackoverflow.com/questions/11118350/how-to-build-query-with-selecting-by-value-of-foreign-objects-field
+
+        String idColumn = "id";
+        String schoolIdColumn = "school_id";
+        String lgaIdColumn = "lga_id";
+        String stateIdColumn = "state_id";
+
+        Dao<School, Integer> schoolDao = DatabaseHelper.getSchoolDao();
+        QueryBuilder<School, Integer> schoolQueryBuilder = schoolDao.queryBuilder();
 
         if (school != null) {
-            Dao<School, Integer> schoolDao = DatabaseHelper.getSchoolDao();
-            QueryBuilder<School, Integer> schoolQueryBuilder = schoolDao.queryBuilder();
-            schoolQueryBuilder.selectColumns("id");
-            Where<School, Integer> studentWhere = schoolQueryBuilder.where();
-            studentWhere.eq("id", state.getId());
+            schoolQueryBuilder.selectColumns(idColumn)
+                    .where()
+                    .eq(idColumn, school.getId());
 
-            where.or().in("school_id", schoolQueryBuilder);
+            where.and()
+                    .in(schoolIdColumn, schoolQueryBuilder);
 
-            return where.query();
+        } else if (lga != null) {
+            schoolQueryBuilder.selectColumns(idColumn)
+                    .where()
+                    .eq(lgaIdColumn, lga.getId());
+
+            where.and()
+                    .in(schoolIdColumn, schoolQueryBuilder);
+
+        } else if(state != null) {
+            Dao<Lga, Integer> lgaDao = DatabaseHelper.getLgaDao();
+            QueryBuilder<Lga, Integer> lgaQueryBuilder = lgaDao.queryBuilder();
+
+            lgaQueryBuilder.selectColumns(idColumn)
+                    .where()
+                    .eq(stateIdColumn, state.getId());
+
+            schoolQueryBuilder.selectColumns(idColumn)
+                    .where()
+                    .in(lgaIdColumn, lgaQueryBuilder);
+
+            where.and()
+                    .in(schoolIdColumn, schoolQueryBuilder);
         }
 
         return queryBuilder.query();

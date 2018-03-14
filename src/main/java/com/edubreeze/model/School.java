@@ -154,6 +154,10 @@ public class School {
         return schoolDao.queryForAll();
     }
 
+    public static School find(int schoolId) throws SQLException {
+        return DatabaseHelper.getSchoolDao().queryForId(schoolId);
+    }
+
     @Override
     public int hashCode() {
         return name.hashCode();

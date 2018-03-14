@@ -6,6 +6,9 @@ import com.edubreeze.model.School;
 import com.edubreeze.model.State;
 import com.edubreeze.model.Student;
 import com.edubreeze.service.LoginService;
+import com.edubreeze.utils.LgaStringConverter;
+import com.edubreeze.utils.SchoolStringConverter;
+import com.edubreeze.utils.StateStringConverter;
 import com.edubreeze.utils.Util;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -113,6 +116,7 @@ public class StudentPersonalInfoController implements Initializable {
     @FXML
     private Button saveAndContinueButton;
 
+    private School currentSelectedSchool = null;
 
     /**
      * Called to initialize a controller after its root element has been
@@ -124,54 +128,39 @@ public class StudentPersonalInfoController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        schoolComboBox.setConverter(new StringConverter() {
-            @Override
-            public String toString(Object object) {
-                return (object == null) ? "" : ((School) object).getName();
-            }
 
-            @Override
-            public Object fromString(String string) {
-                return null;
-            }
-        });
+        stateOfOriginComboBox.setConverter(new StateStringConverter());
+        schoolComboBox.setConverter(new SchoolStringConverter());
+        lgaOfOriginComboBox.setConverter(new LgaStringConverter());
 
         try {
             stateOfOriginComboBox.setItems(FXCollections.observableList(State.getStates()));
         } catch (SQLException ex) {
             Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting state list...");
         }
-        stateOfOriginComboBox.setConverter(new StringConverter() {
-            @Override
-            public String toString(Object object) {
-                return (object == null) ? "" : ((State) object).getName();
-            }
 
-            @Override
-            public Object fromString(String string) {
-                return null;
-            }
-        });
+        /**
+         * set school selection to last selected school to avoid selecting school while entering data
+         * at a given school
+         */
+        try {
+            currentSelectedSchool = AppConfiguration.getCurrentSchool();
+
+            schoolComboBox.setItems(FXCollections.observableArrayList(currentSelectedSchool));
+            schoolComboBox.getSelectionModel().select(0);
+
+        } catch (SQLException ex) {
+            Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting current selected school...");
+        }
 
         stateOfOriginComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            lgaOfOriginComboBox.getSelectionModel().clearSelection();
             if (newVal == null) {
                 lgaOfOriginComboBox.setItems(FXCollections.observableList(new ArrayList<Lga>()));
                 return;
             }
             State selectedState = (State) newVal;
             lgaOfOriginComboBox.setItems(FXCollections.observableList(new ArrayList<Lga>(selectedState.getLgas())));
-        });
-
-        lgaOfOriginComboBox.setConverter(new StringConverter() {
-            @Override
-            public String toString(Object object) {
-                return (object == null) ? "" : ((Lga) object).getName();
-            }
-
-            @Override
-            public Object fromString(String string) {
-                return null;
-            }
         });
 
         dateEnrolledCombo.setItems(AppConfiguration.getAcademicSessions());
@@ -184,28 +173,23 @@ public class StudentPersonalInfoController implements Initializable {
 
         dobDatePicker.setConverter(getDateStringConverter());
 
-        schoolComboBox.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                School selectedSchool = Util.showSelectSchoolDialog();
-                if (selectedSchool != null) {
-                    schoolComboBox.setItems(FXCollections.observableArrayList(selectedSchool));
-                    schoolComboBox.getSelectionModel().select(0);
-                }
-
+        schoolComboBox.setOnMouseClicked(event -> {
+            School selectedSchool = Util.showSelectSchoolDialog();
+            if (selectedSchool != null) {
+                // set school combo to school select from dialog
+                AppConfiguration.setCurrentSchoolId(selectedSchool.getId());
+                schoolComboBox.setItems(FXCollections.observableArrayList(selectedSchool));
+                schoolComboBox.getSelectionModel().select(0);
             }
         });
 
         religionComboBox.setItems(AppConfiguration.getReligionList());
 
-        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
-                } catch (IOException ex) {
-                    Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
-                }
+        cancelButton.setOnAction(event -> {
+            try {
+                Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
             }
         });
     }

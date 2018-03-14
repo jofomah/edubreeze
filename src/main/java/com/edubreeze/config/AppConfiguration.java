@@ -1,21 +1,10 @@
 package com.edubreeze.config;
 
-import com.edubreeze.database.H2DatabaseConnection;
-import com.edubreeze.model.AppStatus;
-import com.edubreeze.model.State;
+import com.edubreeze.model.School;
 import com.edubreeze.model.Student;
-import com.edubreeze.model.User;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.spring.DaoFactory;
-import com.j256.ormlite.support.ConnectionSource;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -47,6 +36,7 @@ public class AppConfiguration {
     public static final String ADD_SUBJECT_MANUALLY = "Add subject manually";
 
     private static UUID currentStudentId;
+    private static int currentSchoolId;
 
     public static final String getDatabaseFileUrl() {
         return "jdbc:h2:~" + AppConfiguration.DATABASE_FILE + ";IGNORECASE=TRUE";
@@ -133,4 +123,16 @@ public class AppConfiguration {
         return Student.find(currentStudentId);
     }
 
+    public static void setCurrentSchoolId(int schoolId) {
+        currentSchoolId = schoolId;
+    }
+
+    /**
+     * Used to track currently selected school to avoid, selecting current school
+     * all the time.
+     * @return
+     */
+    public static School getCurrentSchool() throws SQLException {
+        return School.find(currentSchoolId);
+    }
 }

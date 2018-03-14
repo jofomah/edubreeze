@@ -12,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,30 +22,24 @@ import java.util.Optional;
 public class Util {
 
     public static void showInfo(String title, String headerText, String contentText) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle(title);
-                alert.setHeaderText(headerText);
-                alert.setContentText(contentText);
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(title);
+            alert.setHeaderText(headerText);
+            alert.setContentText(contentText);
 
-                alert.showAndWait();
-            }
+            alert.showAndWait();
         });
     }
 
     public static void showErrorDialog(final String title, final String headerText, final String contentBody) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle(title);
-                alert.setHeaderText(headerText);
-                alert.setContentText(contentBody);
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(headerText);
+            alert.setContentText(contentBody);
 
-                alert.showAndWait();
-            }
+            alert.showAndWait();
         });
     }
 
@@ -55,55 +48,48 @@ public class Util {
             final String title,
             final String headerText
     ) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle(title);
-                alert.setHeaderText(headerText);
-                alert.setContentText(ex.getMessage());
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle(title);
+            alert.setHeaderText(headerText);
+            alert.setContentText(ex.getMessage());
 
 
-                // Create expandable Exception.
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                ex.printStackTrace(pw);
-                String exceptionText = sw.toString();
+            // Create expandable Exception.
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            String exceptionText = sw.toString();
 
-                Label label = new Label("The exception stacktrace was:");
+            Label label = new Label("The exception stacktrace was:");
 
-                TextArea textArea = new TextArea(exceptionText);
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
+            TextArea textArea = new TextArea(exceptionText);
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
 
-                textArea.setMaxWidth(Double.MAX_VALUE);
-                textArea.setMaxHeight(Double.MAX_VALUE);
-                GridPane.setVgrow(textArea, Priority.ALWAYS);
-                GridPane.setHgrow(textArea, Priority.ALWAYS);
+            textArea.setMaxWidth(Double.MAX_VALUE);
+            textArea.setMaxHeight(Double.MAX_VALUE);
+            GridPane.setVgrow(textArea, Priority.ALWAYS);
+            GridPane.setHgrow(textArea, Priority.ALWAYS);
 
-                GridPane expContent = new GridPane();
-                expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(label, 0, 0);
-                expContent.add(textArea, 0, 1);
+            GridPane expContent = new GridPane();
+            expContent.setMaxWidth(Double.MAX_VALUE);
+            expContent.add(label, 0, 0);
+            expContent.add(textArea, 0, 1);
 
-                // Set expandable Exception into the dialog pane.
-                alert.getDialogPane().setExpandableContent(expContent);
+            // Set expandable Exception into the dialog pane.
+            alert.getDialogPane().setExpandableContent(expContent);
 
-                alert.showAndWait();
-            }
+            alert.showAndWait();
         });
     }
 
     public static void changeScreen(final Stage stage, final String screenFxmlResourcePath) throws IOException{
         final Parent root = FXMLLoader.load(Util.class.getClass().getResource(screenFxmlResourcePath));
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                //create a new scene with root and set the stage
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            }
+        Platform.runLater(() -> {
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         });
     }
 
@@ -129,20 +115,9 @@ public class Util {
             ComboBox selectSchoolCombo = new ComboBox();
             selectSchoolCombo.setPromptText("Please select school ...");
 
-            selectStateCombo.setConverter(new StringConverter() {
-                @Override
-                public String toString(Object object) {
-                    if(object == null) {
-                        return "";
-                    }
-                    return ((State) object).getName();
-                }
-
-                @Override
-                public Object fromString(String string) {
-                    return null;
-                }
-            });
+            selectStateCombo.setConverter(new StateStringConverter());
+            selectSchoolCombo.setConverter(new SchoolStringConverter());
+            selectLgaCombo.setConverter(new LgaStringConverter());
 
             selectStateCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
                 State selectedState = ((State)newVal);
@@ -158,21 +133,6 @@ public class Util {
                 selectSchoolCombo.setItems(FXCollections.observableList(new ArrayList<School>()));
             });
 
-            selectLgaCombo.setConverter(new StringConverter() {
-                @Override
-                public String toString(Object object) {
-                   if (object == null) {
-                       return "";
-                   }
-
-                   return ((Lga)object).getName();
-                }
-
-                @Override
-                public Object fromString(String string) {
-                    return null;
-                }
-            });
 
             selectLgaCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
                 Lga selectedLga = ((Lga)newVal);
@@ -182,19 +142,7 @@ public class Util {
                     return;
                 }
 
-                selectSchoolCombo.setItems(FXCollections.observableList(new ArrayList<School>(selectedLga.getSchools())));
-            });
-
-            selectSchoolCombo.setConverter(new StringConverter() {
-                @Override
-                public String toString(Object object) {
-                    return (object == null)? "" : ((School)object).getName();
-                }
-
-                @Override
-                public Object fromString(String string) {
-                    return null;
-                }
+                selectSchoolCombo.setItems(FXCollections.observableList(new ArrayList<>(selectedLga.getSchools())));
             });
 
             gridContentPane.add(new Label("State:"), 0, 0);
@@ -209,7 +157,7 @@ public class Util {
             alert.getDialogPane().setContent(gridContentPane);
 
             alert.setResizable(true);
-            alert.getDialogPane().setPrefSize(250, 250);
+            alert.getDialogPane().setPrefSize(350, 350);
 
             Optional<ButtonType> result = alert.showAndWait();
             if ( result.get() == ButtonType.OK )

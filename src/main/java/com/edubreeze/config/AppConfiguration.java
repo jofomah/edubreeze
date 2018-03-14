@@ -63,15 +63,8 @@ public class AppConfiguration {
         );
     }
 
-    public static ObservableList<String> getStudentClassCategories() {
-        return FXCollections.observableArrayList(
-                "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-        );
-    }
-
     public static ObservableList<String> getStudentClassSectionTypes() {
-        return FXCollections.observableArrayList("Art", "Commerce", "Science", "N/A");
+        return FXCollections.observableArrayList("Art", "Commerce", "Science", "None");
     }
 
     public static ObservableList<String> getReligionList() {

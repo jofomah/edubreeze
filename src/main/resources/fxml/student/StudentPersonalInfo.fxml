@@ -11,283 +11,219 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-            minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.edubreeze.controllers.StudentPersonalInfoController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.StudentPersonalInfoController">
     <top>
-        <fx:include source="../Header.fxml"/>
+        <fx:include source="../Header.fxml" />
     </top>
     <bottom>
-        <fx:include source="../Footer.fxml"/>
+        <fx:include source="../Footer.fxml" />
     </bottom>
     <center>
-        <GridPane alignment="CENTER" focusTraversable="true" maxHeight="1.7976931348623157E308"
-                  maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-                  prefWidth="600.0" BorderPane.alignment="CENTER">
+        <GridPane alignment="CENTER" focusTraversable="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0"
-                                   percentWidth="2.5" prefWidth="202.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" percentWidth="22.5"
-                                   prefWidth="131.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="25.0"
-                                   prefWidth="134.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0"
-                                   percentWidth="22.5" prefWidth="235.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0"
-                                   percentWidth="25.0" prefWidth="235.0"/>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0"
-                                   percentWidth="2.5" prefWidth="235.0"/>
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0" percentWidth="2.5" prefWidth="202.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" percentWidth="22.5" prefWidth="131.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="25.0" prefWidth="134.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="22.5" prefWidth="235.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="25.0" prefWidth="235.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="2.5" prefWidth="235.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="10.0" prefHeight="30.0"
-                                valignment="CENTER" vgrow="NEVER"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label text="*Admission number:." GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                <TextField fx:id="admissionNoTextField" maxHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1"
-                           GridPane.valignment="CENTER"/>
-                <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308"
-                       maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title"
-                       stylesheets="@../../styles/Styles.css" text="Student's Personal Information"
-                       textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER"
-                       GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                <Label text="*Admission number:." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="admissionNoTextField" maxHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title" stylesheets="@../../styles/Styles.css" text="Student's Personal Information" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
                     <font>
-                        <Font name="Arial Bold" size="14.0"/>
+                        <Font name="Arial Bold" size="14.0" />
                     </font>
                 </Label>
-                <Label text="*First name:" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT"
-                       GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <Label text="*First name:" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <TextField fx:id="firstNameTextField" maxHeight="30.0" prefWidth="200.0" GridPane.columnIndex="2"
-                           GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <TextField fx:id="firstNameTextField" maxHeight="30.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </TextField>
-                <Label layoutX="319.0" layoutY="65.0" text="*Last name:" textAlignment="CENTER" GridPane.columnIndex="1"
-                       GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                <Label layoutX="319.0" layoutY="65.0" text="*Last name:" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <TextField fx:id="lastNameTextField" maxHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="3"
-                           GridPane.valignment="CENTER">
+                <TextField fx:id="lastNameTextField" maxHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets top="10.0"/>
+                        <Insets top="10.0" />
                     </GridPane.margin>
                 </TextField>
-                <Label text="*Date of birth:" GridPane.columnIndex="1" GridPane.rowIndex="4"
-                       GridPane.valignment="CENTER">
+                <Label text="*Date of birth:" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <DatePicker fx:id="dobDatePicker" GridPane.columnIndex="2" GridPane.rowIndex="4"
-                            GridPane.valignment="CENTER">
+                <DatePicker fx:id="dobDatePicker" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </DatePicker>
                 <Label text="*Gender:" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
                 <FlowPane alignment="CENTER_LEFT" GridPane.columnIndex="2" GridPane.rowIndex="5">
                     <children>
                         <RadioButton fx:id="genderFemaleRadioButton" mnemonicParsing="false" text="Female">
                             <FlowPane.margin>
-                                <Insets right="30.0"/>
+                                <Insets right="30.0" />
                             </FlowPane.margin>
                         </RadioButton>
-                        <RadioButton fx:id="genderMaleRadioButton" layoutX="10.0" layoutY="17.0" mnemonicParsing="false"
-                                     text="Male"/>
+                        <RadioButton fx:id="genderMaleRadioButton" layoutX="10.0" layoutY="17.0" mnemonicParsing="false" text="Male" />
                     </children>
                 </FlowPane>
-                <Label text="*Class:" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="6"
-                       GridPane.valignment="CENTER">
+                <Label text="*Class:" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <ComboBox fx:id="classComboBox" prefHeight="25.0" prefWidth="263.0" promptText="Please select class"
-                          GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.rowIndex="6"
-                          GridPane.valignment="CENTER">
+                <ComboBox fx:id="classComboBox" prefHeight="25.0" prefWidth="265.0" promptText="Please select class" GridPane.columnIndex="2" GridPane.hgrow="NEVER" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </ComboBox>
-                <Label text="*Class category:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7"
-                       GridPane.valignment="CENTER"/>
-                <ComboBox fx:id="classCategoryComboBox" prefWidth="150.0" promptText="Select category"
-                          GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7"
-                          GridPane.valignment="CENTER"/>
-                <Label text="Class section:" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
-                <TextField fx:id="classSectionTextField" GridPane.columnIndex="2" GridPane.rowIndex="8"/>
-                <Label text="*Class type" GridPane.columnIndex="1" GridPane.rowIndex="9"/>
-                <ComboBox fx:id="classSectiontypeComboBox" prefWidth="150.0"
-                          promptText="Please select class section type" GridPane.columnIndex="2" GridPane.rowIndex="9"/>
-                <Label text="*School:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="10"
-                       GridPane.valignment="CENTER">
+                <Label text="*Class category:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                <TextField fx:id="classCategoryTextField" promptText="e.g A,B, A1" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                <Label text="*Class type" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <ComboBox fx:id="classSectionTypeComboBox" prefWidth="150.0" promptText="Please select class section type" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                <Label text="Class type section:" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <TextField fx:id="classSectionTextField" prefWidth="265.0" promptText="e.g A,B, A1" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+                <Label text="*School:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <ComboBox fx:id="schoolComboBox" prefHeight="25.0" prefWidth="262.0" promptText="Please select school"
-                          GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.valignment="CENTER">
+                <ComboBox fx:id="schoolComboBox" prefHeight="25.0" prefWidth="262.0" promptText="Please select school" GridPane.columnIndex="2" GridPane.rowIndex="10" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </ComboBox>
-                <Label text="*Date enrolled:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER"
-                       GridPane.rowIndex="11" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                <Label text="*Date enrolled:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="11" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </Label>
-                <ComboBox fx:id="dateEnrolledCombo" prefWidth="150.0"
-                          promptText="Please select session student was enrolled" GridPane.columnIndex="2"
-                          GridPane.rowIndex="11"/>
-                <Label layoutX="468.0" layoutY="237.0" text="*Address:" GridPane.columnIndex="1" GridPane.rowIndex="12"
-                       GridPane.valignment="CENTER"/>
-                <TextField fx:id="addressTextField" layoutX="599.0" layoutY="87.0" GridPane.columnIndex="2"
-                           GridPane.rowIndex="12" GridPane.valignment="CENTER"/>
-                <Label layoutX="468.0" layoutY="257.0" text="*LGA of origin:" GridPane.columnIndex="3"
-                       GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <ComboBox fx:id="dateEnrolledCombo" prefWidth="150.0" promptText="Please select session student was enrolled" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+                <Label layoutX="468.0" layoutY="237.0" text="*Address:" GridPane.columnIndex="1" GridPane.rowIndex="12" GridPane.valignment="CENTER" />
+                <TextField fx:id="addressTextField" layoutX="599.0" layoutY="87.0" GridPane.columnIndex="2" GridPane.rowIndex="12" GridPane.valignment="CENTER" />
+                <Label layoutX="468.0" layoutY="257.0" text="*LGA of origin:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label layoutX="468.0" layoutY="293.0" text="*State of origin:" GridPane.columnIndex="3"
-                       GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                <Label layoutX="468.0" layoutY="293.0" text="*State of origin:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <ComboBox fx:id="stateOfOriginComboBox" layoutX="599.0" layoutY="287.0" prefHeight="25.0"
-                          prefWidth="264.0" promptText="Please select origin state" GridPane.columnIndex="4"
-                          GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER"/>
-                <ComboBox fx:id="lgaOfOriginComboBox" prefHeight="25.0" prefWidth="264.0"
-                          promptText="Please select origin LGA" GridPane.columnIndex="4" GridPane.halignment="LEFT"
-                          GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                <ComboBox fx:id="stateOfOriginComboBox" layoutX="599.0" layoutY="287.0" prefHeight="25.0" prefWidth="264.0" promptText="Please select origin state" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                <ComboBox fx:id="lgaOfOriginComboBox" prefHeight="25.0" prefWidth="264.0" promptText="Please select origin LGA" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </ComboBox>
-                <Label text="*Parent/Guardian:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                <Label text="*Parent/Guardian:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <TextField fx:id="parentGuardianTextField" GridPane.columnIndex="4" GridPane.halignment="LEFT"
-                           GridPane.rowIndex="3" GridPane.valignment="CENTER">
+                <TextField fx:id="parentGuardianTextField" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets/>
+                        <Insets />
                     </GridPane.margin>
                 </TextField>
-                <Label text="*Parent/Guardian Phone:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                <Label text="*Parent/Guardian Phone:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <TextField alignment="CENTER_LEFT" fx:id="parentGuardianPhoneTextField" GridPane.columnIndex="4"
-                           GridPane.rowIndex="4"/>
-                <Label text="*Religion:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="5"
-                       GridPane.valignment="CENTER">
+                <TextField fx:id="parentGuardianPhoneTextField" alignment="CENTER_LEFT" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                <Label text="*Religion:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <ComboBox fx:id="religionComboBox" prefHeight="25.0" prefWidth="158.0"
-                          promptText="Please select religion" GridPane.columnIndex="4" GridPane.halignment="LEFT"
-                          GridPane.rowIndex="5" GridPane.valignment="CENTER"/>
-                <Label text="Previous school:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="6">
+                <ComboBox fx:id="religionComboBox" prefHeight="25.0" prefWidth="158.0" promptText="Please select religion" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                <Label text="Previous school:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="6">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Class Passed at Previous School:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="7">
+                <Label text="Class Passed at Previous School:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="7">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Incoming Transfer Cert No.:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="8">
+                <Label text="Incoming Transfer Cert No.:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="8">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Outgoing Transfer Cert No.:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="9">
+                <Label text="Outgoing Transfer Cert No.:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="9">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Date of Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="10">
+                <Label text="Date of Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="10">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Cause of Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="11">
+                <Label text="Cause of Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="11">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <Label text="Occupation after Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT"
-                       GridPane.rowIndex="12">
+                <Label text="Occupation after Leaving:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="12">
                     <GridPane.margin>
-                        <Insets left="20.0"/>
+                        <Insets left="20.0" />
                     </GridPane.margin>
                 </Label>
-                <TextField fx:id="previousSchoolTextField" GridPane.columnIndex="4" GridPane.rowIndex="6"/>
-                <TextField fx:id="classPassedAtPreviousSchoolTextField" GridPane.columnIndex="4" GridPane.rowIndex="7"/>
-                <TextField fx:id="incomingTransferCertNoTextField" GridPane.columnIndex="4" GridPane.rowIndex="8"/>
-                <TextField fx:id="outgoingTransferCertNoTextField" GridPane.columnIndex="4" GridPane.rowIndex="9"/>
-                <ComboBox fx:id="dateOfLeavingCombo" prefWidth="150.0" promptText="Please select date of leaving"
-                          GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="10"
-                          GridPane.valignment="CENTER"/>
-                <TextField fx:id="causeOfLeavingTextField" GridPane.columnIndex="4" GridPane.rowIndex="11"/>
-                <TextField fx:id="occupationAfterLeavingTextField" GridPane.columnIndex="4" GridPane.rowIndex="12"/>
+                <TextField fx:id="previousSchoolTextField" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                <TextField fx:id="classPassedAtPreviousSchoolTextField" GridPane.columnIndex="4" GridPane.rowIndex="7" />
+                <TextField fx:id="incomingTransferCertNoTextField" GridPane.columnIndex="4" GridPane.rowIndex="8" />
+                <TextField fx:id="outgoingTransferCertNoTextField" GridPane.columnIndex="4" GridPane.rowIndex="9" />
+                <ComboBox fx:id="dateOfLeavingCombo" prefWidth="150.0" promptText="Please select date of leaving" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+                <TextField fx:id="causeOfLeavingTextField" GridPane.columnIndex="4" GridPane.rowIndex="11" />
+                <TextField fx:id="occupationAfterLeavingTextField" GridPane.columnIndex="4" GridPane.rowIndex="12" />
 
 
-                <Button fx:id="saveAndContinueButton" mnemonicParsing="false" onAction="#handleSaveAndContinue"
-                        prefHeight="32.0" prefWidth="263.0" text="Save and Continue" GridPane.columnIndex="2"
-                        GridPane.rowIndex="13" GridPane.vgrow="ALWAYS">
+                <Button fx:id="saveAndContinueButton" mnemonicParsing="false" onAction="#handleSaveAndContinue" prefHeight="32.0" prefWidth="263.0" text="Save and Continue" GridPane.columnIndex="2" GridPane.rowIndex="13" GridPane.vgrow="ALWAYS">
                     <GridPane.margin>
-                        <Insets right="10.0"/>
+                        <Insets right="10.0" />
                     </GridPane.margin>
                 </Button>
-                <Button fx:id="cancelButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="150.0" text="Cancel"
-                        GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="13"
-                        GridPane.vgrow="ALWAYS">
+                <Button fx:id="cancelButton" mnemonicParsing="false" prefHeight="32.0" prefWidth="150.0" text="Cancel" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="13" GridPane.vgrow="ALWAYS">
                     <GridPane.margin>
-                        <Insets left="10.0"/>
+                        <Insets left="10.0" />
                     </GridPane.margin>
                 </Button>
             </children>

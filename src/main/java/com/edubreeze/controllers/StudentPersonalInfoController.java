@@ -69,13 +69,13 @@ public class StudentPersonalInfoController implements Initializable {
     private ComboBox stateOfOriginComboBox;
 
     @FXML
-    private ComboBox classCategoryComboBox;
+    private TextField classCategoryTextField;
 
     @FXML
     private TextField classSectionTextField;
 
     @FXML
-    private ComboBox classSectiontypeComboBox;
+    private ComboBox classSectionTypeComboBox;
 
     @FXML
     private TextField parentGuardianTextField;
@@ -177,8 +177,7 @@ public class StudentPersonalInfoController implements Initializable {
         dateEnrolledCombo.setItems(AppConfiguration.getAcademicSessions());
         dateOfLeavingCombo.setItems(AppConfiguration.getAcademicSessions());
         classComboBox.setItems(AppConfiguration.getStudentClassList());
-        classCategoryComboBox.setItems(AppConfiguration.getStudentClassCategories());
-        classSectiontypeComboBox.setItems(AppConfiguration.getStudentClassSectionTypes());
+        classSectionTypeComboBox.setItems(AppConfiguration.getStudentClassSectionTypes());
 
         genderFemaleRadioButton.setToggleGroup(genderGroup);
         genderMaleRadioButton.setToggleGroup(genderGroup);
@@ -234,13 +233,13 @@ public class StudentPersonalInfoController implements Initializable {
             String currentClass = getComboBoxValue(classComboBox);
             student.setCurrentClass(currentClass);
 
-            String classCategory = getComboBoxValue(classCategoryComboBox);
+            String classCategory = classCategoryTextField.getText().trim();
             student.setClassCategory(classCategory);
 
             String classSection = classSectionTextField.getText().trim();
             student.setClassSection(classSection);
 
-            String classSectionType = getComboBoxValue(classSectiontypeComboBox);
+            String classSectionType = getComboBoxValue(classSectionTypeComboBox);
             student.setClassSectionType(classSectionType);
 
             School school = (schoolComboBox.getValue() == null) ? null : (School) schoolComboBox.getValue();

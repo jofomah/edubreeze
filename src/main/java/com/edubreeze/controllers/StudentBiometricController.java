@@ -1,6 +1,7 @@
 package com.edubreeze.controllers;
 
 import com.digitalpersona.uareu.*;
+import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.service.WebCamService;
 import com.edubreeze.service.enrollment.*;
 import com.edubreeze.utils.Util;
@@ -25,9 +26,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -64,6 +67,9 @@ public class StudentBiometricController implements Initializable {
 
     @FXML
     private Button captureFingerPrintButton;
+
+    @FXML
+    private Button previousButton;
 
     private ObservableList<Reader> fingerprintReaders = FXCollections.emptyObservableList();
     private Reader fingerPrintReader;
@@ -188,6 +194,13 @@ public class StudentBiometricController implements Initializable {
             }
         });
 
+        previousButton.setOnAction(event -> {
+            try {
+                Util.changeScreen((Stage) previousButton.getScene().getWindow(), AppConfiguration.STUDENT_ACADEMIC_PERFORMANCE_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
+            }
+        });
     }
 
     private void setupFingerprintList() {

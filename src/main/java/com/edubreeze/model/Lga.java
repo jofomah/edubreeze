@@ -1,9 +1,12 @@
 package com.edubreeze.model;
 
+import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import java.sql.SQLException;
 
 /**
  * An administrative location class for Local Government Areas (Based on Nigeria's admin levels)
@@ -61,9 +64,13 @@ public class Lga {
         return schools;
     }
 
+    public static Lga find(int lgaId) throws SQLException{
+        return  DatabaseHelper.getLgaDao().queryForId(lgaId);
+    }
+
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return new Integer(id).hashCode();
     }
 
     @Override

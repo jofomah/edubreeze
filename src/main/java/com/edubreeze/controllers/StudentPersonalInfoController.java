@@ -117,6 +117,7 @@ public class StudentPersonalInfoController implements Initializable {
     private Button saveAndContinueButton;
 
     private School currentSelectedSchool = null;
+    private Student currentStudent = null;
 
     /**
      * Called to initialize a controller after its root element has been
@@ -132,6 +133,17 @@ public class StudentPersonalInfoController implements Initializable {
         stateOfOriginComboBox.setConverter(new StateStringConverter());
         schoolComboBox.setConverter(new SchoolStringConverter());
         lgaOfOriginComboBox.setConverter(new LgaStringConverter());
+
+
+        try {
+            currentStudent = AppConfiguration.getCurrentlyEditedStudent();
+            if (currentStudent != null) {
+                loadFormWithCurrentStudentData(currentStudent);
+            }
+
+        } catch (SQLException ex) {
+            Util.showExceptionDialogBox(ex, "Get Student Record for Edit Error", "An error occurred while trying to fetch student data been edited.");
+        }
 
         try {
             stateOfOriginComboBox.setItems(FXCollections.observableList(State.getStates()));
@@ -334,5 +346,9 @@ public class StudentPersonalInfoController implements Initializable {
                 return LocalDate.parse(dateString, dateTimeFormatter);
             }
         };
+    }
+
+    private void loadFormWithCurrentStudentData(Student student) {
+        
     }
 }

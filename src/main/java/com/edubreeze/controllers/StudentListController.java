@@ -5,8 +5,10 @@ import com.edubreeze.model.Lga;
 import com.edubreeze.model.School;
 import com.edubreeze.model.State;
 import com.edubreeze.model.Student;
+import com.edubreeze.utils.DateUtil;
 import com.edubreeze.utils.Util;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -157,10 +159,6 @@ public class StudentListController implements Initializable {
     private void initializeStudentTable() {
         studentListTableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn admNoCol = new TableColumn("Admission No");
-        admNoCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("admissionNumber"));
-
         TableColumn firstNameCol = new TableColumn("First Name");
         firstNameCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("firstName"));
@@ -169,25 +167,34 @@ public class StudentListController implements Initializable {
         lastNameCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("lastName"));
 
-        TableColumn dobCol = new TableColumn("Date of Birth");
-        dobCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("dateOfBirth"));
+        TableColumn ageCol = new TableColumn("Age");
+        ageCol.setCellValueFactory(
+                new PropertyValueFactory<Person, Integer>("age"));
 
         TableColumn genderCol = new TableColumn("Gender");
         genderCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("gender"));
 
-        TableColumn dateOfEnrollmentCol = new TableColumn("Enrollment Date");
-        dateOfEnrollmentCol.setCellValueFactory(
-                new PropertyValueFactory<Person, String>("enrollmentDate"));
+        TableColumn classCol = new TableColumn("Class");
+        classCol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("studentClass"));
+
+        TableColumn schoolCol = new TableColumn("School");
+        schoolCol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("school"));
+
+        TableColumn lgaCol = new TableColumn("LGA of Origin");
+        lgaCol.setCellValueFactory(
+                new PropertyValueFactory<Person, String>("lga"));
 
         studentListTableView.getColumns().addAll(
-                admNoCol,
                 firstNameCol,
                 lastNameCol,
-                dobCol,
+                ageCol,
                 genderCol,
-                dateOfEnrollmentCol
+                classCol,
+                schoolCol,
+                lgaCol
         );
 
     }
@@ -200,9 +207,17 @@ public class StudentListController implements Initializable {
         List<Person> studentDataModel = new ArrayList<>();
         List<Student> studentSubList = students.subList(fromIndex, toIndex);
 
-        for(Student student : studentSubList) {
+        for (Student student : studentSubList) {
 
-            System.out.println("Student Id: " + student.getAutoId());
+            Lga originLga = null;
+            School school = null;
+            try {
+                originLga = Lga.find(student.getLga().getId());
+                school = School.find(student.getSchool().getId());
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
 
             Person personData = new Person(
                     student.getAdmissionNumber(),
@@ -211,7 +226,9 @@ public class StudentListController implements Initializable {
                     student.getDateOfBirth(),
                     student.getGender(),
                     student.getCurrentClass(),
-                    student.getDateEnrolled()
+                    student.getDateEnrolled(),
+                    (school != null) ? school.getName() : "N/A",
+                    (originLga != null) ? originLga.getName() : "N/A"
             );
 
             studentDataModel.add(personData);
@@ -237,17 +254,17 @@ public class StudentListController implements Initializable {
 
     public void handleSearchButtonClick(MouseEvent event) {
         State state = null;
-        if(selectStateComboBox.getValue() != null) {
+        if (selectStateComboBox.getValue() != null) {
             state = (State) selectStateComboBox.getValue();
         }
 
         Lga lga = null;
-        if(selectLgaCombox.getValue() != null) {
+        if (selectLgaCombox.getValue() != null) {
             lga = (Lga) selectLgaCombox.getValue();
         }
 
         School school = null;
-        if(selectSchoolComboBox.getValue() != null) {
+        if (selectSchoolComboBox.getValue() != null) {
             school = (School) selectSchoolComboBox.getValue();
         }
 
@@ -257,8 +274,8 @@ public class StudentListController implements Initializable {
             List<Student> studentSearchResult = Student.searchBy(state, lga, school, keyword);
             students.clear();
             students.addAll(studentSearchResult);
-        }catch(SQLException ex) {
-          ex.printStackTrace(System.out);
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
         }
 
         setPagination();
@@ -274,18 +291,25 @@ public class StudentListController implements Initializable {
         private final SimpleStringProperty dateOfBirth;
         private final SimpleStringProperty studentClass;
         private final SimpleStringProperty enrollmentDate;
+        private final SimpleStringProperty school;
+        private final SimpleStringProperty lga;
+        private final SimpleIntegerProperty age;
 
-        private Person(String admNo, String fName, String lName, Date dob, String gender, String studentClass, String enrollmentDate) {
+        private Person(String admNo, String fName, String lName, Date dob, String gender, String studentClass, String enrollmentDate, String school, String lga) {
             this.admissionNumber = new SimpleStringProperty(admNo);
             this.firstName = new SimpleStringProperty(fName);
             this.lastName = new SimpleStringProperty(lName);
             this.gender = new SimpleStringProperty(gender);
+            this.school = new SimpleStringProperty(school);
+            this.lga = new SimpleStringProperty(lga);
 
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             this.dateOfBirth = new SimpleStringProperty(dateFormat.format(dob));
 
             this.studentClass = new SimpleStringProperty(studentClass);
             this.enrollmentDate = new SimpleStringProperty(enrollmentDate);
+
+            this.age = new SimpleIntegerProperty(DateUtil.getAge(dob));
         }
 
         public String getAdmissionNumber() {
@@ -354,6 +378,34 @@ public class StudentListController implements Initializable {
 
         public void setEnrollmentDate(String enrollmentDate) {
             this.enrollmentDate.set(enrollmentDate);
+        }
+
+        public String getSchool() {
+            return school.get();
+        }
+
+        public void setSchool(String school) {
+            this.school.set(school);
+        }
+
+        public String getLga() {
+            return lga.get();
+        }
+
+        public void setLga(String lga) {
+            this.lga.set(lga);
+        }
+
+        public int getAge() {
+            return age.get();
+        }
+
+        public SimpleIntegerProperty ageProperty() {
+            return age;
+        }
+
+        public void setAge(int age) {
+            this.age.set(age);
         }
     }
 

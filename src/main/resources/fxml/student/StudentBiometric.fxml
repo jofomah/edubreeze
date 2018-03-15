@@ -61,7 +61,7 @@
                         <Insets />
                     </GridPane.margin>
                 </Label>
-                <Button mnemonicParsing="false" prefHeight="32.0" prefWidth="263.0" text="Save and Continue" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+                <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="137.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>

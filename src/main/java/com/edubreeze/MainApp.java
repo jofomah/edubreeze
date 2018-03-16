@@ -33,8 +33,6 @@ public class MainApp extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource(loginScreenPath));
 
-        System.out.println("javafx.runtime.version: " + System.getProperties().get("javafx.runtime.version"));
-
         Scene scene = new Scene(root);
         scene.getStylesheets().add(mainStyleSheetPath);
 

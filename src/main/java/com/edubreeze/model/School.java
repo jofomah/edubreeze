@@ -20,7 +20,7 @@ public class School {
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Lga lga;
 
     @DatabaseField

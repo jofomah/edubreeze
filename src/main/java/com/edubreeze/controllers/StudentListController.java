@@ -7,13 +7,10 @@ import com.edubreeze.model.State;
 import com.edubreeze.model.Student;
 import com.edubreeze.utils.DateUtil;
 import com.edubreeze.utils.Util;
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -24,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -33,10 +31,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class StudentListController implements Initializable {
 
@@ -187,6 +182,12 @@ public class StudentListController implements Initializable {
         lgaCol.setCellValueFactory(
                 new PropertyValueFactory<Person, String>("lga"));
 
+        TableColumn<Person, String> actionCol = new TableColumn<>("Action");
+        actionCol.setSortable(false);
+
+        // create a cell value factory with an add button for each row in the table.
+        actionCol.setCellFactory(getActionButtonsCell());
+
         studentListTableView.getColumns().addAll(
                 firstNameCol,
                 lastNameCol,
@@ -194,9 +195,70 @@ public class StudentListController implements Initializable {
                 genderCol,
                 classCol,
                 schoolCol,
-                lgaCol
+                lgaCol,
+                actionCol
         );
 
+    }
+
+    private Callback<TableColumn<Person, String>, TableCell<Person, String>> getActionButtonsCell() {
+        Callback<TableColumn<Person, String>, TableCell<Person, String>> cellFactory
+                =
+                new Callback<TableColumn<Person, String>, TableCell<Person, String>>() {
+                    @Override
+                    public TableCell call(final TableColumn<Person, String> param) {
+                        final TableCell<Person, String> cell = new TableCell<Person, String>() {
+
+                            final Button viewButton = new Button("View");
+                            final Button editButton = new Button("Edit");
+                            final HBox cellHBoxPane = new HBox(viewButton, editButton);
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                cellHBoxPane.setSpacing(10);
+
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                } else {
+                                    viewButton.setOnAction(event -> {
+                                        Person person = getTableView().getItems().get(getIndex());
+
+                                        try {
+                                            Student student = Student.find(person.getAutoId());
+
+                                            if(student == null) {
+                                                Util.showInfo(
+                                                        "Missing Student Data",
+                                                        "Student: " + person.getAutoId() + " not found",
+                                                        "Student data could not be found on local database."
+                                                );
+                                                return;
+                                            }
+
+                                            URL viewStudentDataFXMLURL = getClass().getResource(AppConfiguration.VIEW_STUDENT_DATA_SCREEN);
+                                            Util.showViewStudentData(student, viewStudentDataFXMLURL);
+
+                                        } catch(SQLException ex) {
+                                            Util.showExceptionDialogBox(ex, "Get Student Record Error", "An error occurred while trying to fetch student.");
+                                        }
+                                    });
+
+                                    editButton.setOnAction(event -> {
+                                        System.out.println("Set current student id and change to edit personal info");
+                                    });
+
+                                    setGraphic(cellHBoxPane);
+                                    setText(null);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                };
+
+        return cellFactory;
     }
 
     private Node createPage(int pageIndex) {
@@ -220,6 +282,7 @@ public class StudentListController implements Initializable {
             }
 
             Person personData = new Person(
+                    student.getAutoId(),
                     student.getAdmissionNumber(),
                     student.getFirstName(),
                     student.getLastName(),
@@ -283,7 +346,7 @@ public class StudentListController implements Initializable {
 
 
     public static class Person {
-
+        private final SimpleObjectProperty<UUID> autoId;
         private final SimpleStringProperty admissionNumber;
         private final SimpleStringProperty firstName;
         private final SimpleStringProperty lastName;
@@ -295,7 +358,8 @@ public class StudentListController implements Initializable {
         private final SimpleStringProperty lga;
         private final SimpleIntegerProperty age;
 
-        private Person(String admNo, String fName, String lName, Date dob, String gender, String studentClass, String enrollmentDate, String school, String lga) {
+        private Person(UUID autoId, String admNo, String fName, String lName, Date dob, String gender, String studentClass, String enrollmentDate, String school, String lga) {
+            this.autoId = new SimpleObjectProperty<>(autoId);
             this.admissionNumber = new SimpleStringProperty(admNo);
             this.firstName = new SimpleStringProperty(fName);
             this.lastName = new SimpleStringProperty(lName);
@@ -303,13 +367,25 @@ public class StudentListController implements Initializable {
             this.school = new SimpleStringProperty(school);
             this.lga = new SimpleStringProperty(lga);
 
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            DateFormat dateFormat = new SimpleDateFormat(AppConfiguration.DATE_PATTERN_DD_MM_YYYY);
             this.dateOfBirth = new SimpleStringProperty(dateFormat.format(dob));
 
             this.studentClass = new SimpleStringProperty(studentClass);
             this.enrollmentDate = new SimpleStringProperty(enrollmentDate);
 
             this.age = new SimpleIntegerProperty(DateUtil.getAge(dob));
+        }
+
+        public UUID getAutoId() {
+            return autoId.get();
+        }
+
+        public SimpleObjectProperty<UUID> autoIdProperty() {
+            return autoId;
+        }
+
+        public void setAutoId(UUID autoId) {
+            this.autoId.set(autoId);
         }
 
         public String getAdmissionNumber() {

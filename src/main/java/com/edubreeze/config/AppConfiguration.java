@@ -10,6 +10,7 @@ import java.util.*;
 
 public class AppConfiguration {
 
+    public static final String DATE_PATTERN_DD_MM_YYYY = "dd/MM/yyyy";
     public static final String LOGIN_SCREEN_PATH = "/fxml/LoginScreen.fxml";
     public static final String MAIN_STYLESHEET_PATH = "/styles/Styles.css";
     public static final String APP_TITLE = "EduBreeze - Easy to use Biometric Education Management Information System";
@@ -20,6 +21,7 @@ public class AppConfiguration {
     public static final String STUDENT_LIST_SCREEN = "/fxml/student/StudentList.fxml";
     public static final String STUDENT_BIOMETRIC_SCREEN = "/fxml/student/StudentBiometric.fxml";
     public static final String STUDENT_ACADEMIC_PERFORMANCE_SCREEN = "/fxml/student/StudentAcademicPerformance.fxml";
+    public static final String VIEW_STUDENT_DATA_SCREEN = "/fxml/student/ViewStudentData.fxml";
     public static final String INITIAL_SYNC_KEY = "INITIAL_SYNC";
     public static final String LOGIN_ERROR_DIALOG_HEADER = "Login Failed";
     public static final String WRONG_USERNAME_AND_PASSWORD = "Wrong username and/or password.";

@@ -1,14 +1,18 @@
 package com.edubreeze.utils;
 
+import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.model.Lga;
 import com.edubreeze.model.School;
 import com.edubreeze.model.State;
+import com.edubreeze.model.Student;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
@@ -16,10 +20,83 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 public class Util {
+
+    public static void showViewStudentData(Student student, URL resourceURL) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.NONE);
+
+            // required for NONE alert type to close, it must have at least one button so we add ok button
+            alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
+            alert.setTitle("View Student Data");
+
+            try {
+                BorderPane rootBorderPane = FXMLLoader.load(resourceURL);
+                TabPane tabPane = (TabPane) rootBorderPane.getCenter();
+                ObservableList<Tab> tabs = tabPane.getTabs();
+
+                Tab personalDataTab = tabs.get(0);
+                GridPane personalDataGridPane = (GridPane) personalDataTab.getContent();
+                addPersonalData(student, personalDataGridPane);
+
+                alert.getDialogPane().setContent(rootBorderPane);
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            // alert.getDialogPane().setExpandableContent(expContent);
+
+            alert.showAndWait();
+        });
+    }
+
+    private static void addPersonalData(Student student, GridPane personalDataPane) {
+        int secondColumnIndex = 1;
+        int fourthColumnIndex = 3;
+
+        int firstRow = 0, secondRow = 1, thirdRow = 2, fourthRow = 3, fifthRow = 4, sixthRow = 5, seventhRow = 6,
+                eighthRow = 7, ninthRow = 8, tenthRow = 9, eleventhRow = 10, twevlvethRow = 11;
+
+        // row index ranges from 0 to 11 i.e 12 rows
+        personalDataPane.add(new Label(student.getAdmissionNumber()), secondColumnIndex, firstRow);
+        personalDataPane.add(new Label(student.getFirstName()), secondColumnIndex, secondRow);
+        personalDataPane.add(new Label(student.getLastName()), secondColumnIndex, thirdRow);
+
+        DateFormat dateFormat = new SimpleDateFormat(AppConfiguration.DATE_PATTERN_DD_MM_YYYY);
+        personalDataPane.add(new Label(dateFormat.format(student.getDateOfBirth())), secondColumnIndex, fourthRow);
+
+        personalDataPane.add(new Label(student.getGender()), secondColumnIndex, fifthRow);
+        personalDataPane.add(new Label(student.getCurrentClass()), secondColumnIndex, sixthRow);
+        personalDataPane.add(new Label(student.getClassCategory()), secondColumnIndex, seventhRow);
+        personalDataPane.add(new Label(student.getClassSectionType()), secondColumnIndex, eighthRow);
+        personalDataPane.add(new Label(student.getClassSection()), secondColumnIndex, ninthRow);
+        personalDataPane.add(new Label(student.getSchool().getName()), secondColumnIndex, tenthRow);
+        personalDataPane.add(new Label(student.getDateEnrolled()), secondColumnIndex, eleventhRow);
+        personalDataPane.add(new Label(student.getContactPersonAddress()), secondColumnIndex, twevlvethRow);
+
+        // add third column values
+        personalDataPane.add(new Label(student.getState().getName()), fourthColumnIndex, firstRow);
+        personalDataPane.add(new Label(student.getLga().getName()), fourthColumnIndex, secondRow);
+        personalDataPane.add(new Label(student.getContactPersonName()), fourthColumnIndex, thirdRow);
+        personalDataPane.add(new Label(student.getContactPersonPhoneNumber()), fourthColumnIndex, fourthRow);
+        personalDataPane.add(new Label(student.getReligion()), fourthColumnIndex, fifthRow);
+        personalDataPane.add(new Label(student.getPreviousSchool()), fourthColumnIndex, sixthRow);
+        personalDataPane.add(new Label(student.getClassPassedAtPreviousSchool()), fourthColumnIndex, seventhRow);
+        personalDataPane.add(new Label(student.getIncomingTransferCertNo()), fourthColumnIndex, eighthRow);
+        personalDataPane.add(new Label(student.getOutgoingTransferCertNo()), fourthColumnIndex, ninthRow);
+        personalDataPane.add(new Label(student.getDateOfLeaving()), fourthColumnIndex, tenthRow);
+        personalDataPane.add(new Label(student.getCauseOfLeaving()), fourthColumnIndex, eleventhRow);
+        personalDataPane.add(new Label(student.getOccupationAfterLeaving()), fourthColumnIndex, twevlvethRow);
+    }
 
     public static void showInfo(String title, String headerText, String contentText) {
         Platform.runLater(() -> {
@@ -84,7 +161,7 @@ public class Util {
         });
     }
 
-    public static void changeScreen(final Stage stage, final String screenFxmlResourcePath) throws IOException{
+    public static void changeScreen(final Stage stage, final String screenFxmlResourcePath) throws IOException {
         final Parent root = FXMLLoader.load(Util.class.getClass().getResource(screenFxmlResourcePath));
         Platform.runLater(() -> {
             Scene scene = new Scene(root);
@@ -93,8 +170,7 @@ public class Util {
         });
     }
 
-    public static School showSelectSchoolDialog()
-    {
+    public static School showSelectSchoolDialog() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("School Selection Dialog Box");
         alert.setHeaderText("Select school");
@@ -120,8 +196,8 @@ public class Util {
             selectLgaCombo.setConverter(new LgaStringConverter());
 
             selectStateCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
-                State selectedState = ((State)newVal);
-                if(selectedState == null) {
+                State selectedState = ((State) newVal);
+                if (selectedState == null) {
                     // set selected LGA to
                     selectLgaCombo.getItems().clear();
                     return;
@@ -135,8 +211,8 @@ public class Util {
 
 
             selectLgaCombo.valueProperty().addListener((obs, oldVal, newVal) -> {
-                Lga selectedLga = ((Lga)newVal);
-                if(selectedLga == null) {
+                Lga selectedLga = ((Lga) newVal);
+                if (selectedLga == null) {
                     // set selected LGA to nothing
                     selectSchoolCombo.getItems().clear();
                     return;
@@ -160,10 +236,9 @@ public class Util {
             alert.getDialogPane().setPrefSize(350, 350);
 
             Optional<ButtonType> result = alert.showAndWait();
-            if ( result.get() == ButtonType.OK )
-            {
-                if(selectSchoolCombo.getValue() != null) {
-                    selectedSchool =  (School)selectSchoolCombo.getValue();
+            if (result.get() == ButtonType.OK) {
+                if (selectSchoolCombo.getValue() != null) {
+                    selectedSchool = (School) selectSchoolCombo.getValue();
                 }
             }
 

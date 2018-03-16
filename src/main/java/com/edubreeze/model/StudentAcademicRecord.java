@@ -57,7 +57,7 @@ public class StudentAcademicRecord {
     @DatabaseField(canBeNull = false)
     private Date updatedAt;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Student student;
 
     public StudentAcademicRecord() {

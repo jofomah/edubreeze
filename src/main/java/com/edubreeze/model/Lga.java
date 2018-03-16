@@ -20,7 +20,7 @@ public class Lga {
     @DatabaseField(canBeNull = false)
     private String name;
 
-    @DatabaseField(canBeNull = false, foreign = true)
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private State state;
 
     @ForeignCollectionField(eager = false)

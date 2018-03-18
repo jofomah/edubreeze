@@ -22,7 +22,7 @@ import java.util.UUID;
 @DatabaseTable(tableName = "students")
 public class Student {
 
-    private static final String UPDATED_AT_COLUMNN_NAME = "updatedAt";
+    private static final String UPDATED_AT_COLUMN_NAME = "updatedAt";
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private UUID autoId;
@@ -120,6 +120,9 @@ public class Student {
 
     @ForeignCollectionField(eager = false)
     private ForeignCollection<StudentFingerprint> fingerprints;
+
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<StudentAcademicTerm> academicTerms;
 
     public Student() {
         // ORMLite needs a no-arg constructor
@@ -321,6 +324,10 @@ public class Student {
         this.occupationAfterLeaving = occupationAfterLeaving;
     }
 
+    public ForeignCollection<StudentAcademicTerm> getAcademicTerms() {
+        return academicTerms;
+    }
+
     public boolean canSavePersonalInfo() {
         return (isValidString(admissionNumber) && isValidString(firstName) && isValidString(lastName) && dateOfBirth != null &&
                 isValidString(gender) && isValidString(currentClass) && isValidString(classCategory) && isValidString(classSectionType) &&
@@ -359,7 +366,7 @@ public class Student {
     public static List<Student> getAll() throws SQLException {
         Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
         boolean isAscendingOrder = false;
-        return studentDao.queryBuilder().orderBy(Student.UPDATED_AT_COLUMNN_NAME, isAscendingOrder).query();
+        return studentDao.queryBuilder().orderBy(Student.UPDATED_AT_COLUMN_NAME, isAscendingOrder).query();
     }
 
     public static Student find(UUID studentId) throws SQLException {

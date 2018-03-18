@@ -2,7 +2,6 @@ package com.edubreeze.model;
 
 import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
@@ -14,25 +13,24 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "student_fingerprints")
-public class StudentFingerprint {
-
+@DatabaseTable(tableName = "student_academic_terms")
+public class StudentAcademicTerm {
     private static final String UPDATED_AT_COLUMN_NAME = "updatedAt";
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private UUID id;
 
-    @DatabaseField(dataType = DataType.BYTE_ARRAY, canBeNull = false)
-    byte[] fingerprintImageBytes;
-
-    @DatabaseField(dataType = DataType.BYTE_ARRAY, canBeNull = false)
-    byte[] fmdBytes;
+    @DatabaseField(canBeNull = false)
+    private String term;
 
     @DatabaseField(canBeNull = false)
-    String fingerType;
+    private String year;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-    private Student student;
+    @DatabaseField(canBeNull = false)
+    private int daysPresent;
+
+    @DatabaseField(canBeNull = false)
+    private int daysAbsent;
 
     @DatabaseField(canBeNull = false)
     private String createdBy;
@@ -46,15 +44,18 @@ public class StudentFingerprint {
     @DatabaseField(canBeNull = false)
     private Date updatedAt;
 
-    public StudentFingerprint() {
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    private Student student;
+
+    public StudentAcademicTerm() {
         // no args constructor required by ORMLite
     }
 
-    public StudentFingerprint(byte[] fpImageBytes, byte[] fmdData, String fpType, Student std) {
-        fingerprintImageBytes = fpImageBytes;
-        fmdBytes = fmdData;
-        fingerType = fpType;
-        student = std;
+    public StudentAcademicTerm(String term, String year, int daysPresent, int daysAbsent) {
+        this.term = term;
+        this.year = year;
+        this.daysPresent = daysPresent;
+        this.daysAbsent = daysAbsent;
     }
 
     public UUID getId() {
@@ -65,28 +66,36 @@ public class StudentFingerprint {
         this.id = id;
     }
 
-    public byte[] getFingerprintImageBytes() {
-        return fingerprintImageBytes;
+    public String getTerm() {
+        return term;
     }
 
-    public void setFingerprintImageBytes(byte[] fingerprintImageBytes) {
-        this.fingerprintImageBytes = fingerprintImageBytes;
+    public void setTerm(String term) {
+        this.term = term;
     }
 
-    public byte[] getFmdBytes() {
-        return fmdBytes;
+    public String getYear() {
+        return year;
     }
 
-    public void setFmdBytes(byte[] fmdBytes) {
-        this.fmdBytes = fmdBytes;
+    public void setYear(String year) {
+        this.year = year;
     }
 
-    public String getFingerType() {
-        return fingerType;
+    public int getDaysPresent() {
+        return daysPresent;
     }
 
-    public void setFingerType(String fingerType) {
-        this.fingerType = fingerType;
+    public void setDaysPresent(int daysPresent) {
+        this.daysPresent = daysPresent;
+    }
+
+    public int getDaysAbsent() {
+        return daysAbsent;
+    }
+
+    public void setDaysAbsent(int daysAbsent) {
+        this.daysAbsent = daysAbsent;
     }
 
     public String getCreatedBy() {
@@ -121,10 +130,16 @@ public class StudentFingerprint {
         this.updatedAt = updatedAt;
     }
 
-    public boolean canSaveBiometric() {
-        return (fingerType != null && !fingerType.isEmpty() &&
-                fingerprintImageBytes != null && fingerprintImageBytes.length > 0 &&
-                fmdBytes != null && fmdBytes.length > 0 && student != null);
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public boolean canSave() {
+        return (term != null && !term.isEmpty() && year != null && !year.isEmpty() && student != null);
     }
 
     public void save(User user) throws SQLException {
@@ -146,22 +161,22 @@ public class StudentFingerprint {
         // always update updatedBy
         setUpdatedBy(user.getUsername());
 
-        Dao<StudentFingerprint, UUID> studentFingerprintDao = DatabaseHelper.getStudentFingerprintDao();
+        Dao<StudentAcademicTerm, UUID> studentAcademicTermDao = DatabaseHelper.getStudentAcademicTermDao();
 
-        studentFingerprintDao.createOrUpdate(this);
+        studentAcademicTermDao.createOrUpdate(this);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StudentFingerprint that = (StudentFingerprint) o;
-        return Objects.equals(getId(), that.getId());
+        StudentAcademicTerm that = (StudentAcademicTerm) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getId());
+        return Objects.hash(id);
     }
 }

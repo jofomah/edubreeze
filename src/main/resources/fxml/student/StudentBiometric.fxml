@@ -62,7 +62,7 @@
                         <Insets />
                     </GridPane.margin>
                 </Label>
-                <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="137.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+                <Button fx:id="previousButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
@@ -87,16 +87,16 @@
                </viewport>
                 </ImageView>
                 <Label fx:id="fingerprintReaderStatusLabel" text="Status" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                <Button fx:id="saveAndExitButton" layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="263.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+                <Button fx:id="saveAndExitButton" defaultButton="true" layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="260.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="8">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </Button>
                 <FlowPane prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                     <children>
-                        <Button fx:id="captureFingerPrintButton" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" text="Capture Fingerprint" />
-                  <Button fx:id="refreshFingerprintReadersButton" mnemonicParsing="false" prefHeight="25.0" text="Refresh Readers" />
-                        <Button mnemonicParsing="false" prefHeight="25.0" text="Cancel">
+                        <Button fx:id="captureFingerPrintButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Capture Fingerprint" />
+                  <Button fx:id="refreshFingerprintReadersButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Refresh Readers" />
+                        <Button mnemonicParsing="false" prefHeight="35.0" text="Cancel">
                             <FlowPane.margin>
                                 <Insets left="5.0" />
                             </FlowPane.margin>
@@ -105,8 +105,8 @@
                 </FlowPane>
                 <FlowPane layoutX="598.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                     <children>
-                        <Button fx:id="captureImageButton" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Capture Image" />
-                  <Button fx:id="cancelCaptureImageButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Cancel">
+                        <Button fx:id="captureImageButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" text="Capture Image" />
+                  <Button fx:id="cancelCaptureImageButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Cancel">
                      <FlowPane.margin>
                         <Insets left="5.0" />
                      </FlowPane.margin>

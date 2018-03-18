@@ -17,8 +17,9 @@ public class DatabaseHelper {
     private static Dao<School, Integer> schoolDao = null;
     private static Dao<Student, UUID> studentDao = null;
     private static Dao<AppStatus, String> appStatusDao = null;
-    private static Dao<StudentAcademicRecord, UUID> studentAcademicPerformanceDao = null;
+    private static Dao<AcademicRecord, UUID> academicRecordDao = null;
     private static Dao<StudentFingerprint, UUID> studentFingerprintDao = null;
+    private static Dao<StudentAcademicTerm, UUID> studentAcademicTermDao = null;
 
     public static DatabaseConnectionInterface getDatabaseConnection() throws SQLException {
         if (databaseConnection == null) {
@@ -27,11 +28,11 @@ public class DatabaseHelper {
         return databaseConnection;
     }
 
-    public static Dao<StudentAcademicRecord, UUID> getStudentAcademicPerformanceDao() throws SQLException{
-        if(studentAcademicPerformanceDao == null) {
-            studentAcademicPerformanceDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), StudentAcademicRecord.class);
+    public static Dao<AcademicRecord, UUID> getAcademicRecordDao() throws SQLException{
+        if(academicRecordDao == null) {
+            academicRecordDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), AcademicRecord.class);
         }
-        return studentAcademicPerformanceDao;
+        return academicRecordDao;
     }
 
     public static Dao<State, Integer> getStateDao() throws SQLException {
@@ -79,5 +80,12 @@ public class DatabaseHelper {
             studentFingerprintDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), StudentFingerprint.class);
         }
         return studentFingerprintDao;
+    }
+
+    public static Dao<StudentAcademicTerm, UUID> getStudentAcademicTermDao() throws SQLException {
+        if(studentAcademicTermDao == null) {
+            studentAcademicTermDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), StudentAcademicTerm.class);
+        }
+        return studentAcademicTermDao;
     }
 }

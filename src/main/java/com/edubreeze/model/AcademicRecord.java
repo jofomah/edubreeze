@@ -13,25 +13,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-@DatabaseTable(tableName = "student_academic_records")
-public class StudentAcademicRecord {
-
-    private static final String UPDATED_AT_COLUMNN_NAME = "updatedAt";
+@DatabaseTable(tableName = "academic_records")
+public class AcademicRecord {
+    private static final String UPDATED_AT_COLUMN_NAME = "updatedAt";
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private UUID id;
 
-    @DatabaseField(canBeNull = false)
-    private String term;
-
-    @DatabaseField(canBeNull = false)
-    private String year;
-
-    @DatabaseField(canBeNull = false)
-    private int daysPresent;
-
-    @DatabaseField(canBeNull = false)
-    private int daysAbsent;
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    private StudentAcademicTerm academicTerm;
 
     @DatabaseField(canBeNull = false)
     private String subject;
@@ -57,27 +47,18 @@ public class StudentAcademicRecord {
     @DatabaseField(canBeNull = false)
     private Date updatedAt;
 
-    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
-    private Student student;
-
-    public StudentAcademicRecord() {
+    public AcademicRecord() {
         // no-args constructor required by ORMLite
     }
 
-    public StudentAcademicRecord(
-            String term,
-            String year,
-            int daysPresent,
-            int daysAbsent,
+    public AcademicRecord(
+            StudentAcademicTerm academicTerm,
             String subject,
             int continuousAssessmentScore,
             int examScore,
             int totalScore
     ) {
-        this.term = term;
-        this.year = year;
-        this.daysPresent = daysPresent;
-        this.daysAbsent = daysAbsent;
+        this.academicTerm = academicTerm;
         this.subject = subject;
         this.continuousAssessmentScore = continuousAssessmentScore;
         this.examScore = examScore;
@@ -90,38 +71,6 @@ public class StudentAcademicRecord {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public String getTerm() {
-        return term;
-    }
-
-    public void setTerm(String term) {
-        this.term = term;
-    }
-
-    public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
-    }
-
-    public int getDaysPresent() {
-        return daysPresent;
-    }
-
-    public void setDaysPresent(int daysPresent) {
-        this.daysPresent = daysPresent;
-    }
-
-    public int getDaysAbsent() {
-        return daysAbsent;
-    }
-
-    public void setDaysAbsent(int daysAbsent) {
-        this.daysAbsent = daysAbsent;
     }
 
     public String getSubject() {
@@ -138,6 +87,14 @@ public class StudentAcademicRecord {
 
     public void setContinuousAssessmentScore(int continuousAssessmentScore) {
         this.continuousAssessmentScore = continuousAssessmentScore;
+    }
+
+    public StudentAcademicTerm getAcademicTerm() {
+        return academicTerm;
+    }
+
+    public void setAcademicTerm(StudentAcademicTerm academicTerm) {
+        this.academicTerm = academicTerm;
     }
 
     public int getExamScore() {
@@ -188,17 +145,8 @@ public class StudentAcademicRecord {
         this.updatedAt = updatedAt;
     }
 
-    public Student getStudent() {
-        return student;
-    }
-
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-
     public boolean canSave() {
-        return (term != null && !term.isEmpty() && year != null && !year.isEmpty() && student != null &&
-                subject != null && !subject.isEmpty());
+        return (academicTerm != null && subject != null && !subject.isEmpty());
     }
 
     public void save(User user) throws SQLException{
@@ -220,19 +168,19 @@ public class StudentAcademicRecord {
         // always update updatedBy
         setUpdatedBy(user.getUsername());
 
-        Dao<StudentAcademicRecord, UUID> studentAcademicDao = DatabaseHelper.getStudentAcademicPerformanceDao();
+        Dao<AcademicRecord, UUID> academicRecordDao = DatabaseHelper.getAcademicRecordDao();
 
-        studentAcademicDao.createOrUpdate(this);
+        academicRecordDao.createOrUpdate(this);
     }
 
-    public static List<StudentAcademicRecord> getByStudent(Student student) throws SQLException{
-        Dao<StudentAcademicRecord, UUID> studentAcademiceDao = DatabaseHelper.getStudentAcademicPerformanceDao();
+    public static List<AcademicRecord> getByStudent(Student student) throws SQLException{
+        Dao<AcademicRecord, UUID> academicRecordDao = DatabaseHelper.getAcademicRecordDao();
         boolean isAscendingOrder = false;
 
-        return studentAcademiceDao.queryBuilder()
-                .orderBy(StudentAcademicRecord.UPDATED_AT_COLUMNN_NAME, isAscendingOrder)
+        return academicRecordDao.queryBuilder()
+                .orderBy(AcademicRecord.UPDATED_AT_COLUMN_NAME, isAscendingOrder)
                 .where()
-                .eq("student_id", student)
+                .in("academicTerm_id", student.getAcademicTerms())
                 .query();
     }
 }

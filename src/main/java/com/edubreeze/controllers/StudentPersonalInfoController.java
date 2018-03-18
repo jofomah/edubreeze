@@ -385,7 +385,6 @@ public class StudentPersonalInfoController implements Initializable {
 
         ObservableList<School> schools = FXCollections.observableArrayList(student.getSchool());
         schoolComboBox.setItems(schools);
-        System.out.println("School : " + student.getSchool().getName() + ", size : " + schools.size());
         schoolComboBox.getSelectionModel().select(student.getSchool());
 
         schoolComboBox.getSelectionModel().select(student.getSchool());

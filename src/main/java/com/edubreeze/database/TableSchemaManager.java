@@ -15,7 +15,8 @@ public class TableSchemaManager {
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), School.class);
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), Student.class);
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), AppStatus.class);
-        TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), StudentAcademicRecord.class);
+        TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), StudentAcademicTerm.class);
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), StudentFingerprint.class);
+        TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), AcademicRecord.class);
     }
 }

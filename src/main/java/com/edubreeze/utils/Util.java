@@ -1,10 +1,8 @@
 package com.edubreeze.utils;
 
 import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.model.Lga;
-import com.edubreeze.model.School;
-import com.edubreeze.model.State;
-import com.edubreeze.model.Student;
+import com.edubreeze.model.*;
+import com.edubreeze.service.enrollment.FingerPrintEnrollment;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,9 +10,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,22 +21,19 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Util {
 
     public static void showViewStudentData(Student student, URL resourceURL) {
         Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.NONE);
-
-            // required for NONE alert type to close, it must have at least one button so we add ok button
-            alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
-            alert.setTitle("View Student Data");
-
             try {
+                Alert alert = new Alert(Alert.AlertType.NONE);
+
+                // required for NONE alert type to close, it must have at least one button so we add ok button
+                alert.getDialogPane().getButtonTypes().add(ButtonType.OK);
+                alert.setTitle("View Student Data");
+
                 BorderPane rootBorderPane = FXMLLoader.load(resourceURL);
                 TabPane tabPane = (TabPane) rootBorderPane.getCenter();
                 ObservableList<Tab> tabs = tabPane.getTabs();
@@ -47,16 +42,91 @@ public class Util {
                 GridPane personalDataGridPane = (GridPane) personalDataTab.getContent();
                 addPersonalData(student, personalDataGridPane);
 
+                Tab biometricDataTab = tabs.get(2);
+                HBox biometricMainHBox = (HBox)biometricDataTab.getContent();
+                addBiometricData(student, biometricMainHBox);
+
                 alert.getDialogPane().setContent(rootBorderPane);
 
+                alert.showAndWait();
+
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showExceptionDialogBox(ex, "View Student Data Error", "Could not show student data dialog");
             }
 
-            // alert.getDialogPane().setExpandableContent(expContent);
-
-            alert.showAndWait();
         });
+    }
+
+    private static void addBiometricData(Student student, HBox biometricMainHBox) {
+        byte[] studentImageBytes = student.getStudentImage();
+        Image studentImage = null;
+        HashMap<FingerPrintEnrollment.FingerType, Image> fingerprintsImage = new HashMap<>();
+        if(studentImageBytes != null) {
+            try {
+                studentImage = ImageUtil.convertToImage(studentImageBytes);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Convert Student Image Error",
+                        "An error occurred while trying to convert student image."
+                );
+            }
+        }
+
+        List<StudentFingerprint> studentFingerprints = new ArrayList<>(student.getFingerprints());
+        for(StudentFingerprint studentFp : studentFingerprints) {
+
+            FingerPrintEnrollment.FingerType key = FingerPrintEnrollment.FingerType.getFromFingerName(studentFp.getFingerType());
+
+            if(key == null) {
+                continue;
+            }
+
+            try {
+                fingerprintsImage.put(key, ImageUtil.convertToImage(studentFp.getFingerprintImageBytes()));
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Convert Student Fingerprint Image Error",
+                        "An error occurred while trying to convert student fingerprint data to image."
+                );
+            }
+        }
+
+        int studentImageVBoxIndex = 0;
+        VBox studentImageVBox = (VBox) biometricMainHBox.getChildren().get(studentImageVBoxIndex);
+        int imageViewIndex = 1;
+        ImageView studentImageView = (ImageView)studentImageVBox.getChildren().get(imageViewIndex);
+        if(studentImage != null) {
+            studentImageView.setFitHeight(studentImage.getHeight());
+            studentImageView.setFitWidth(studentImage.getWidth());
+            studentImageView.setImage(studentImage);
+        }
+
+        int studentFingerprintVBoxIndex = 1;
+        VBox studentFingerprintVBox = (VBox) biometricMainHBox.getChildren().get(studentFingerprintVBoxIndex);
+
+        int currentFinger = 0;
+
+        int currentFingerLabelIndex = 0; // first one
+        int currentFingerprintImageIndex = 1; // first one
+        int rowGap = 2;
+
+        for(HashMap.Entry<FingerPrintEnrollment.FingerType, Image> fingerprintImage : fingerprintsImage.entrySet()) {
+
+            if(currentFinger < fingerprintsImage.size()) {
+                Label currentLabel = (Label) studentFingerprintVBox.getChildren().get(currentFingerLabelIndex);
+                currentLabel.setText(currentLabel.getText() + " " + fingerprintImage.getKey().fingerName());
+
+                ImageView currentFingerprintImageView = (ImageView) studentFingerprintVBox.getChildren().get(currentFingerprintImageIndex);
+                currentFingerprintImageView.setImage(fingerprintImage.getValue());
+
+                // move to second row from current row in vertical box
+                currentFingerLabelIndex += rowGap;
+                currentFingerprintImageIndex += rowGap;
+                currentFinger++;
+            }
+        }
     }
 
     private static void addPersonalData(Student student, GridPane personalDataPane) {
@@ -121,7 +191,7 @@ public class Util {
     }
 
     public static void showExceptionDialogBox(
-            final Exception ex,
+            final Throwable ex,
             final String title,
             final String headerText
     ) {

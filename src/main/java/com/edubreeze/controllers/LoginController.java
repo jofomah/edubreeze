@@ -69,7 +69,7 @@ public class LoginController implements Initializable {
             try {
                 Stage screenStage = (Stage) loginButton.getScene().getWindow();
                 if (appService.hasCompletedInitialSync()) {
-                    Util.changeScreen(screenStage, AppConfiguration.STUDENT_LIST_SCREEN);
+                   Util.changeScreen(screenStage, AppConfiguration.STUDENT_LIST_SCREEN);
                 } else {
                     Util.changeScreen(screenStage, AppConfiguration.LOADING_SCREEN);
                 }

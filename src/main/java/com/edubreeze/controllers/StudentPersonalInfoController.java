@@ -6,17 +6,13 @@ import com.edubreeze.model.School;
 import com.edubreeze.model.State;
 import com.edubreeze.model.Student;
 import com.edubreeze.service.LoginService;
-import com.edubreeze.utils.LgaStringConverter;
-import com.edubreeze.utils.SchoolStringConverter;
-import com.edubreeze.utils.StateStringConverter;
-import com.edubreeze.utils.Util;
+import com.edubreeze.utils.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
@@ -54,10 +50,10 @@ public class StudentPersonalInfoController implements Initializable {
     private DatePicker dobDatePicker;
 
     @FXML
-    private ComboBox classComboBox;
+    private ComboBox<String> classComboBox;
 
     @FXML
-    private ComboBox schoolComboBox;
+    private ComboBox<School> schoolComboBox;
 
     @FXML
     private ComboBox<String> dateEnrolledCombo;
@@ -116,6 +112,9 @@ public class StudentPersonalInfoController implements Initializable {
     @FXML
     private Button saveAndContinueButton;
 
+    @FXML
+    private Button nextSectionButton;
+
     private School currentSelectedSchool = null;
     private Student currentStudent = null;
 
@@ -134,6 +133,20 @@ public class StudentPersonalInfoController implements Initializable {
         schoolComboBox.setConverter(new SchoolStringConverter());
         lgaOfOriginComboBox.setConverter(new LgaStringConverter());
 
+        /**
+         * set school selection to last selected school to avoid selecting school while entering data
+         * at a given school
+         */
+        try {
+            currentSelectedSchool = AppConfiguration.getCurrentSchool();
+
+            schoolComboBox.setItems(FXCollections.observableArrayList(currentSelectedSchool));
+            schoolComboBox.getSelectionModel().select(0);
+
+        } catch (SQLException ex) {
+            Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting current selected school...");
+        }
+
 
         try {
             currentStudent = AppConfiguration.getCurrentlyEditedStudent();
@@ -151,19 +164,6 @@ public class StudentPersonalInfoController implements Initializable {
             Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting state list...");
         }
 
-        /**
-         * set school selection to last selected school to avoid selecting school while entering data
-         * at a given school
-         */
-        try {
-            currentSelectedSchool = AppConfiguration.getCurrentSchool();
-
-            schoolComboBox.setItems(FXCollections.observableArrayList(currentSelectedSchool));
-            schoolComboBox.getSelectionModel().select(0);
-
-        } catch (SQLException ex) {
-            Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting current selected school...");
-        }
 
         stateOfOriginComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             lgaOfOriginComboBox.getSelectionModel().clearSelection();
@@ -204,12 +204,29 @@ public class StudentPersonalInfoController implements Initializable {
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
             }
         });
+
+        nextSectionButton.setOnAction(event -> {
+            if(currentStudent != null && currentStudent.canSavePersonalInfo() && currentStudent.getAutoId() != null) {
+                try {
+                    Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_ACADEMIC_PERFORMANCE_SCREEN);
+                } catch (IOException ex) {
+                    Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
+                }
+            } else {
+                Util.showInfo(
+                        "Incomplete/Unsaved Student Data Error",
+                        "Student Personal Data is Not Complete",
+                        "Please, complete and save student personal information before moving to next section."
+                );
+            }
+        });
     }
 
     @FXML
     public void handleSaveAndContinue(ActionEvent event) {
         try {
-            Student student = new Student();
+
+            Student student = (currentStudent != null)? currentStudent : new Student();
 
             String admissionNumber = admissionNoTextField.getText().trim();
             student.setAdmissionNumber(admissionNumber);
@@ -238,7 +255,7 @@ public class StudentPersonalInfoController implements Initializable {
             String classSectionType = getComboBoxValue(classSectionTypeComboBox);
             student.setClassSectionType(classSectionType);
 
-            School school = (schoolComboBox.getValue() == null) ? null : (School) schoolComboBox.getValue();
+            School school = schoolComboBox.getValue();
             student.setSchool(school);
 
             String dateEnrolled = getComboBoxValue(dateEnrolledCombo);
@@ -285,6 +302,7 @@ public class StudentPersonalInfoController implements Initializable {
             student.setOccupationAfterLeaving(occupationAfterLeaving);
 
             if (student.canSavePersonalInfo()) {
+
                 // save
                 student.save(LoginService.getCurrentLoggedInUser());
                 AppConfiguration.setCurrentlyEditedStudentId(student.getAutoId());
@@ -349,6 +367,41 @@ public class StudentPersonalInfoController implements Initializable {
     }
 
     private void loadFormWithCurrentStudentData(Student student) {
-        
+        admissionNoTextField.setText(student.getAdmissionNumber());
+        firstNameTextField.setText(student.getFirstName());
+        lastNameTextField.setText(student.getLastName());
+        dobDatePicker.setValue(DateUtil.convertDate(student.getDateOfBirth()));
+
+        if(student.getGender().equalsIgnoreCase("MALE")) {
+            genderMaleRadioButton.setSelected(true);
+        } else if (student.getGender().equalsIgnoreCase("FEMALE")){
+            genderFemaleRadioButton.setSelected(true);
+        }
+
+        classComboBox.getSelectionModel().select(student.getCurrentClass());
+        classCategoryTextField.setText(student.getClassCategory());
+        classSectionTextField.setText(student.getClassSection());
+        classSectionTypeComboBox.getSelectionModel().select(student.getClassSectionType());
+
+        ObservableList<School> schools = FXCollections.observableArrayList(student.getSchool());
+        schoolComboBox.setItems(schools);
+        System.out.println("School : " + student.getSchool().getName() + ", size : " + schools.size());
+        schoolComboBox.getSelectionModel().select(student.getSchool());
+
+        schoolComboBox.getSelectionModel().select(student.getSchool());
+        dateEnrolledCombo.getSelectionModel().select(student.getDateEnrolled());
+        addressTextField.setText(student.getContactPersonAddress());
+        stateOfOriginComboBox.getSelectionModel().select(student.getState());
+        lgaOfOriginComboBox.getSelectionModel().select(student.getLga());
+        parentGuardianTextField.setText(student.getContactPersonName());
+        parentGuardianPhoneTextField.setText(student.getContactPersonPhoneNumber());
+        religionComboBox.getSelectionModel().select(student.getReligion());
+        previousSchoolTextField.setText(student.getPreviousSchool());
+        classPassedAtPreviousSchoolTextField.setText(student.getClassPassedAtPreviousSchool());
+        incomingTransferCertNoTextField.setText(student.getIncomingTransferCertNo());
+        outgoingTransferCertNoTextField.setText(student.getOutgoingTransferCertNo());
+        dateOfLeavingCombo.getSelectionModel().select(student.getDateOfLeaving());
+        causeOfLeavingTextField.setText(student.getCauseOfLeaving());
+        occupationAfterLeavingTextField.setText(student.getOccupationAfterLeaving());
     }
 }

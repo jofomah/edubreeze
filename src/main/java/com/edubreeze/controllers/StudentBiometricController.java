@@ -1,16 +1,22 @@
 package com.edubreeze.controllers;
 
-import com.digitalpersona.uareu.*;
+import com.digitalpersona.uareu.Fid;
+import com.digitalpersona.uareu.Fmd;
+import com.digitalpersona.uareu.Reader;
+import com.digitalpersona.uareu.UareUException;
 import com.edubreeze.config.AppConfiguration;
+import com.edubreeze.model.Student;
+import com.edubreeze.model.StudentFingerprint;
+import com.edubreeze.service.LoginService;
 import com.edubreeze.service.WebCamService;
 import com.edubreeze.service.enrollment.*;
+import com.edubreeze.utils.ImageUtil;
 import com.edubreeze.utils.Util;
+import com.edubreeze.utils.WebcamStringConverter;
 import com.github.sarxos.webcam.Webcam;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -25,18 +31,17 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class StudentBiometricController implements Initializable {
+public class StudentBiometricController implements Initializable, EnrollmentActionListener {
 
     @FXML
     private ComboBox webcamsComboBox;
@@ -71,23 +76,43 @@ public class StudentBiometricController implements Initializable {
     @FXML
     private Button previousButton;
 
-    private ObservableList<Reader> fingerprintReaders = FXCollections.emptyObservableList();
-    private Reader fingerPrintReader;
-    private final Fid.Format fingerprintImageFormat = Fid.Format.ANSI_381_2004;
-    private final Reader.ImageProcessing fingerprintImageProc = Reader.ImageProcessing.IMG_PROC_DEFAULT;
-    private ObjectProperty<Image> fingerprintImageProperty = new SimpleObjectProperty<Image>();
-    private CaptureTask captureFingerPrintTask;
-    private EnrollmentTask enrollmentTask = null;
+    @FXML
+    private Button saveAndExitButton;
+
+    @FXML
+    private ComboBox<FingerPrintEnrollment.FingerType> selectFingerCombo;
+
+    @FXML
+    private Label capturedFingerprintStatusLabel;
 
     private ObservableList<Webcam> webcams = FXCollections.emptyObservableList();
     private Webcam webCam = null;
     private boolean stopCamera = false;
     private BufferedImage grabbedImage;
-    private ObjectProperty<Image> imageProperty = new SimpleObjectProperty<Image>();
+    private ObjectProperty<Image> imageProperty = new SimpleObjectProperty<>();
+
+    private EnrollmentThread enrollmentThread = null;
+    private boolean enrollmentJustStarted = true;
+    private final HashMap<FingerPrintEnrollment.FingerType, EnrollmentThread.EnrollmentEvent> fingerprintEnrollmentMap = new HashMap<>();
+    private Reader currentReader = null;
+    private static final int MAX_NUMBER_OF_FINGERPRINTS = 2;
+
+    private Student currentStudent = null;
+    private FingerPrintEnrollment.FingerType currentFingerType = null;
 
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        try {
+            currentStudent = AppConfiguration.getCurrentlyEditedStudent();
+            if (currentStudent != null) {
+                loadStudentDataToForm();
+            }
+
+        } catch (SQLException ex) {
+            Util.showExceptionDialogBox(ex, "Get Student Record for Edit Error", "An error occurred while trying to fetch student data been edited.");
+        }
 
         setupFingerprintList();
 
@@ -105,17 +130,7 @@ public class StudentBiometricController implements Initializable {
 
         webcamsComboBox.setItems(webcams);
 
-        webcamsComboBox.setConverter(new StringConverter() {
-            @Override
-            public String toString(Object object) {
-                return (object != null) ? ((Webcam) object).getDevice().getName() : "";
-            }
-
-            @Override
-            public Object fromString(String string) {
-                return null;
-            }
-        });
+        webcamsComboBox.setConverter(new WebcamStringConverter());
 
         webcamsComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
             Webcam selectedWebCam = null;
@@ -148,15 +163,11 @@ public class StudentBiometricController implements Initializable {
                                 webCam.close();
 
                                 updateMessage("Status: Displaying capture image.");
-                                Platform.runLater(new Runnable() {
-
-                                    @Override
-                                    public void run() {
-                                        studentPassportImageView.setImage(ref.get());
-                                        cancelCaptureImageButton.setDisable(false);
-                                        captureImageButton.setDisable(true);
-                                        stopCamera = true;
-                                    }
+                                Platform.runLater(() -> {
+                                    studentPassportImageView.setImage(ref.get());
+                                    cancelCaptureImageButton.setDisable(false);
+                                    captureImageButton.setDisable(true);
+                                    stopCamera = true;
                                 });
                             }
                         } catch (Exception e) {
@@ -167,13 +178,7 @@ public class StudentBiometricController implements Initializable {
                     }
                 };
 
-                Platform.runLater(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        webCamStatusLabel.textProperty().bind(task.messageProperty());
-                    }
-                });
+                Platform.runLater(() -> webCamStatusLabel.textProperty().bind(task.messageProperty()));
 
                 Thread th = new Thread(task);
                 th.setDaemon(true);
@@ -201,6 +206,187 @@ public class StudentBiometricController implements Initializable {
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
             }
         });
+
+        saveAndExitButton.setOnAction(event -> {
+            boolean studentImageSet = setStudentImage();
+
+            if (!studentImageSet) {
+                Util.showErrorDialog(
+                        "Missing Student Image",
+                        "Student Image Not Set",
+                        "Please, capture student image"
+                );
+                return;
+            }
+
+            List<StudentFingerprint> studentFingerprints = prepareStudentFingerprints();
+            if(!canSaveStudentFingerprints(studentFingerprints)) {
+                Util.showErrorDialog(
+                        "Missing Student Complete Student Fingerprints",
+                        "Student Fingerprints are not Set or Incomplete.",
+                        "Please, reset and capture student fingerprints."
+                );
+                return;
+            }
+
+
+            try {
+                currentStudent.save(LoginService.getCurrentLoggedInUser());
+            } catch (SQLException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Save Student Biometric Record Error",
+                        "An error occurred while trying to save student image data."
+                );
+                return;
+            }
+
+            int count = 0;
+            try {
+                for(StudentFingerprint fp : studentFingerprints) {
+                    fp.save(LoginService.getCurrentLoggedInUser());
+                    count++;
+                }
+            } catch(SQLException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Save Student Biometric Record Error",
+                        "An error occurred while trying to save student fingerprints data, only " +
+                                count + "/" + studentFingerprints.size() + " were saved."
+                );
+                return;
+            }
+
+            try {
+                Util.changeScreen((Stage) saveAndExitButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
+            }
+        });
+
+        List<FingerPrintEnrollment.FingerType> fingerTypes = Arrays.asList(FingerPrintEnrollment.FingerType.values());
+        selectFingerCombo.setItems(FXCollections.observableArrayList(fingerTypes));
+        selectFingerCombo.valueProperty().addListener(((observable, oldValue, newValue) -> {
+            currentFingerType =  newValue;
+
+            if(currentFingerType == null) {
+                fingerprintReaderStatusLabel.setText("Please select finger type to be captured.");
+                return;
+            }
+
+            startFingerprintCapture();
+
+        }));
+
+    }
+
+    private boolean canSaveStudentFingerprints(List<StudentFingerprint> fingerprints) {
+        boolean hasCompleteFingers = fingerprints != null && fingerprints.size() == MAX_NUMBER_OF_FINGERPRINTS;
+
+        for(StudentFingerprint fp : fingerprints) {
+            boolean canSaveBiometrics = fp.canSaveBiometric();
+            if(!canSaveBiometrics) {
+                return canSaveBiometrics;
+            }
+        }
+
+        return hasCompleteFingers;
+    }
+
+    private void loadStudentDataToForm() {
+        byte[] studentImageByte = currentStudent.getStudentImage();
+        if(studentImageByte != null) {
+            try {
+                Image studentImage = ImageUtil.convertToImage(studentImageByte);
+                studentPassportImageView.setImage(studentImage);
+
+                capturedFingerprintStatusLabel.setText("Student Fingerprints already captured: " +
+                        currentStudent.getFingerprints().size() + "/" + MAX_NUMBER_OF_FINGERPRINTS
+                );
+
+            } catch(IOException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Load Student Image Error",
+                        "An error occurred while trying to load student passport."
+                );
+            }
+        }
+
+    }
+
+    private List<StudentFingerprint> prepareStudentFingerprints() {
+        if(fingerprintEnrollmentMap.size() < MAX_NUMBER_OF_FINGERPRINTS) {
+            Util.showErrorDialog(
+                    "Incomplete Student Fingerprint Capture",
+                    "Student fingerprint capture is not complete.",
+                    "Please cancel current fingerprint capture and capture " +  MAX_NUMBER_OF_FINGERPRINTS  + " fingerprints."
+            );
+            return new ArrayList<>();
+        }
+
+        List<StudentFingerprint>  fingerprints = new ArrayList<>(currentStudent.getFingerprints());
+        List<StudentFingerprint>  newStudentFingerprints = new ArrayList<>(MAX_NUMBER_OF_FINGERPRINTS);
+
+        int currentFingerprint = 0;
+        for(Map.Entry<FingerPrintEnrollment.FingerType, EnrollmentThread.EnrollmentEvent> enrollmentEventEntry : fingerprintEnrollmentMap.entrySet()) {
+            FingerPrintEnrollment.FingerType fpType = enrollmentEventEntry.getKey();
+            EnrollmentThread.EnrollmentEvent enrollmentEvent = enrollmentEventEntry.getValue();
+
+            // update existing student finger print if any, else create new one
+            StudentFingerprint fingerprint;
+
+            Image fingerprintImage = ImageUtil.convertFidToJavaFXImage(enrollmentEvent.capture_result.image);
+            byte[] fpImageBytes;
+            try {
+                fpImageBytes = ImageUtil.convertToByteArray(ImageUtil.convertToBuffered(fingerprintImage));
+            } catch(IOException ex) {
+                Util.showExceptionDialogBox(ex, "Fingerprint Image Conversion Error", "An Error Occurred while converting fingerpint image");
+                continue;
+            }
+            byte[] fpFmdBytes = enrollmentEvent.enrollment_fmd.getData();
+
+            if(currentFingerprint < fingerprints.size() && (fingerprint = fingerprints.get(currentFingerprint)) != null) {
+                fingerprint.setFmdBytes(fpFmdBytes);
+                fingerprint.setFingerprintImageBytes(fpImageBytes);
+                fingerprint.setFingerType(fpType.fingerName());
+
+            } else {
+                fingerprint = new StudentFingerprint(fpImageBytes, fpFmdBytes, fpType.fingerName(), currentStudent);
+            }
+
+            newStudentFingerprints.add(fingerprint);
+
+            currentFingerprint++;
+        }
+
+        return newStudentFingerprints;
+    }
+
+    private boolean setStudentImage() {
+        boolean wasSet = false;
+        Image studentImage = studentPassportImageView.getImage();
+        if(studentImage == null) {
+            Util.showErrorDialog(
+                    "Missing Student Passport",
+                    "Please take/capture student passport.",
+                    "Please take student passport before saving."
+            );
+            return wasSet;
+        }
+        BufferedImage bufImg = ImageUtil.convertToBuffered(studentImage);
+
+        try{
+            byte[] studentImageBytes = ImageUtil.convertToByteArray(bufImg);
+            currentStudent.setStudentImage(studentImageBytes);
+
+            wasSet = true;
+
+        } catch (IOException ex) {
+            Util.showExceptionDialogBox(ex, "Student Image Conversion Error", "An error occurred while converting student image");
+        }
+
+        return wasSet;
     }
 
     private void setupFingerprintList() {
@@ -217,61 +403,41 @@ public class StudentBiometricController implements Initializable {
          */
         fingerprintReadersComboBox.valueProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    if (newValue == null) {
+                    currentReader = (Reader) newValue;
+                    Reader oldReader = (Reader) oldValue;
+
+                    if (currentReader == null) {
                         fingerprintReaderStatusLabel.setText("Please select a reader from the list.");
                         return;
                     }
 
-                    if (enrollmentTask != null) {
-                        enrollmentTask.cancel();
-                    }
-
-                    boolean isStreaming = false;
-
-                    Reader reader = (Reader) newValue;
-
-                    fingerprintReaderStatusLabel.setText("Selected reader: " + reader.GetDescription().id.product_name);
-
                     try {
-                        enrollmentTask = new EnrollmentTask(reader, isStreaming);
-                    } catch(UareUException ex) {
-                        System.out.println("Enrollment Task ......");
+
+                        if(oldReader != null) {
+                            oldReader.Close();
+                        }
+
+                    }  catch (UareUException ex) {
+                        Util.showExceptionDialogBox(ex, "Open Fingerprint Reader Error", "Please, unplug fingerprint, plug back, refresh list and try again.");
+                        return;
                     }
 
-                    enrollmentTask.valueProperty().addListener(new ChangeListener<EnrollmentEvent>() {
-                        @Override
-                        public void changed(
-                                ObservableValue<? extends EnrollmentEvent> observable,
-                                EnrollmentEvent oldValue,
-                                EnrollmentEvent newValue
-                        ) {
+                    fingerprintReaderStatusLabel.setText("Selected reader: " + currentReader.GetDescription().id.product_name);
 
-                            processEnrollmentEventUpdate(newValue);
+                    //open reader
+                    try {
+                        currentReader.Open(Reader.Priority.COOPERATIVE);
+                    } catch (UareUException ex) {
+                        Util.showExceptionDialogBox(ex, "Open Fingerprint Reader Error", "Please, unplug fingerprint, plug back, refresh list and try again.");
+                        return;
+                    }
 
-                        }
-                    });
-
-                    enrollmentTask.setOnSucceeded(t -> {
-                        System.out.println("Successful enrollment" + t.getSource().getValue());
-                    });
-
-                    enrollmentTask.setOnFailed(f -> {
-                        f.getSource().getException().printStackTrace();
-                    });
-
-                    enrollmentTask.setOnCancelled(f -> {
-                        System.out.println("Enrollment cancelled...");
-                    });
-
-                    //studentFingerprintImageView.imageProperty().unbind();
-                    //studentFingerprintImageView.imageProperty().bind(captureFingerprintService.valueFingerprintImageProperty());
-
-                    new Thread(enrollmentTask).start();
+                    startFingerprintCapture();
 
                 });
 
         captureFingerPrintButton.setOnAction(event -> {
-
+            startFingerprintCapture();
         });
 
         refreshFingerprintReadersButton.setOnAction(event -> {
@@ -279,42 +445,30 @@ public class StudentBiometricController implements Initializable {
         });
     }
 
-    private void processEnrollmentEventUpdate(EnrollmentEvent enrollmentEvent) {
-        String action = enrollmentEvent.action;
-        Reader.Status readerStatus  = enrollmentEvent.readerStatus;
-        Fmd fmd = enrollmentEvent.fmd;
-        CaptureTask.CaptureTaskResult ct = enrollmentEvent.captureTaskResult;
+    private void startFingerprintCapture() {
+        if(currentReader == null) {
+            fingerprintReaderStatusLabel.setText("Please select finger print reader to be used.");
+            return;
+        }
 
-        if(action.equals(EnrollmentEvent.ACT_PROMPT)){
-            fingerprintReaderStatusLabel.setText("Place any finger on the reader.");
+        if(currentFingerType == null) {
+            fingerprintReaderStatusLabel.setText("Please, select finger type to be captured.");
+            return;
         }
-        else if(action.equals(EnrollmentEvent.ACT_CAPTURE)){
-            if(ct == null) {
-                System.out.println("ACT CapTURE result is null");
-            } else if(null != ct.captureResult){
-                System.out.println("Quality : " + ct.captureResult.quality);
-            }
-            else if(null != readerStatus){
-                System.out.println("Reader Status: " + readerStatus.status.name());
-            }
+
+        //stop enrollment thread
+        if (enrollmentThread != null) {
+            enrollmentThread.cancel();
         }
-        else if(action.equals(EnrollmentEvent.ACT_FEATURES)){
-            System.out.println("Feature extraction ...");
-        }
-        else if(action.equals(EnrollmentEvent.ACT_DONE)){
-            if(null == fmd){
-                String str = String.format("    enrollment template created, size: %d\n\n\n",fmd.getData().length);
-                fingerprintReaderStatusLabel.setText(str);
-            }
-            else{
-                System.out.println("Enrollment template creation error");
-                // MessageBox.DpError("Enrollment template creation", evt.exception);
-            }
-        }
-        else if(action.equals(EnrollmentEvent.ACT_CANCELED)){
-            //canceled, destroy dialog
-           System.out.println("Stop enrollment");
-        }
+
+        enrollmentThread = new EnrollmentThread(currentReader, this);
+
+        //start enrollment thread
+        enrollmentThread.start();
+
+        enrollmentThread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
+            Util.showExceptionDialogBox(exception, "Enrollment Thread Exception", "An error occurred during enrollment");
+        });
     }
 
     private void refreshFingerprintReaders() {
@@ -366,14 +520,10 @@ public class StudentBiometricController implements Initializable {
         webCamThread.setDaemon(true);
         webCamThread.start();
 
-        Platform.runLater(new Runnable() {
-
-            @Override
-            public void run() {
-                webCamStatusLabel.textProperty().bind(webCamTask.messageProperty());
-                cancelCaptureImageButton.setDisable(true);
-                captureImageButton.setDisable(false);
-            }
+        Platform.runLater(() -> {
+            webCamStatusLabel.textProperty().bind(webCamTask.messageProperty());
+            cancelCaptureImageButton.setDisable(true);
+            captureImageButton.setDisable(false);
         });
     }
 
@@ -403,13 +553,7 @@ public class StudentBiometricController implements Initializable {
                             ref.set(SwingFXUtils.toFXImage(img, ref.get()));
                             img.flush();
 
-                            Platform.runLater(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    imageProperty.set(ref.get());
-                                }
-                            });
+                            Platform.runLater(() -> imageProperty.set(ref.get()));
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -420,20 +564,133 @@ public class StudentBiometricController implements Initializable {
             }
         };
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                captureImageButton.setDisable(false);
-                webCamStatusLabel.textProperty().bind(task.messageProperty());
-                studentPassportImageView.imageProperty().bind(imageProperty);
-            }
+        Platform.runLater(() -> {
+            captureImageButton.setDisable(false);
+            webCamStatusLabel.textProperty().bind(task.messageProperty());
+            studentPassportImageView.imageProperty().bind(imageProperty);
         });
 
 
         Thread th = new Thread(task);
         th.setDaemon(true);
         th.start();
+    }
 
+    @Override
+    public void handleEnrollmentAction(EnrollmentThread.EnrollmentEvent enrollmentEvent) {
+        if(currentFingerType == null) {
+            fingerprintReaderStatusLabel.setText("Please select finger to be captured");
+            enrollmentThread.cancel();
+            return;
+        }
 
+        if (enrollmentEvent.action.equals(EnrollmentThread.ACT_PROMPT)) {
+            if (enrollmentJustStarted) {
+                fingerprintReaderStatusLabel.setText("New enrollment, put " + currentFingerType.fingerName() + " on the reader.");
+            } else {
+                fingerprintReaderStatusLabel.setText("Put the same " + currentFingerType.fingerName() + " on the reader.");
+            }
+            enrollmentJustStarted = false;
+        } else if (enrollmentEvent.action.equals(EnrollmentThread.ACT_CAPTURE)) {
+            Platform.runLater(() -> {
+                if (enrollmentEvent.capture_result != null) {
+                    Util.showInfo(
+                            "Fingerprint Enrollment Error",
+                            "Bad Image Quality",
+                            "Image Quality is poor: " + enrollmentEvent.capture_result.quality + ", please try again"
+
+                    );
+                } else if (enrollmentEvent.exception != null) {
+                    Util.showExceptionDialogBox(enrollmentEvent.exception, "Capture Error", enrollmentEvent.exception.getMessage());
+                } else if (enrollmentEvent.reader_status != null) {
+                    Util.showInfo(
+                            "Fingerprint Enrollment Error",
+                            "Bad Reader Status",
+                            "Reader status is bad, unplug, refresh list, plug back, refresh list and try again"
+
+                    );
+                }
+            });
+
+            enrollmentJustStarted = false;
+        } else if (enrollmentEvent.action.equals(EnrollmentThread.ACT_FEATURES)) {
+            Platform.runLater(() -> {
+                if (enrollmentEvent.exception == null) {
+                    showImage(enrollmentEvent.capture_result);
+                    fingerprintReaderStatusLabel.setText("fingerprint captured, features extracted");
+                } else {
+                    Util.showExceptionDialogBox(enrollmentEvent.exception, "Fingerprint Enrollment Error", "Feature Extraction");
+                }
+            });
+            enrollmentJustStarted = false;
+
+        } else if (enrollmentEvent.action.equals(EnrollmentThread.ACT_DONE)) {
+            if (enrollmentEvent.exception == null) {
+                Platform.runLater(() -> {
+                    setEnrollment(enrollmentEvent);
+                    String str = String.format("Enrollment template created, size: %d", enrollmentEvent.enrollment_fmd.getData().length);
+                    fingerprintReaderStatusLabel.setText(str);
+                });
+            } else {
+                Platform.runLater(() -> {
+                    Util.showExceptionDialogBox(enrollmentEvent.exception, "Fingerprint Enrollment Error", "Enrollment Template Creation");
+                });
+            }
+            enrollmentJustStarted = true;
+        } else if (enrollmentEvent.action.equals(EnrollmentThread.ACT_CANCELED)) {
+            //canceled
+            enrollmentThread.cancel();
+            fingerprintReaderStatusLabel.setText("Capture cancelled, start again by clicking capture button.");
+        }
+
+        //cancel enrollment if any exception or bad reader status
+        if (enrollmentEvent.exception != null) {
+            enrollmentThread.cancel();
+            fingerprintReaderStatusLabel.setText("Capture cancelled due to an error, start again by clicking capture button.");
+
+        } else if (null != enrollmentEvent.reader_status &&
+                Reader.ReaderStatus.READY != enrollmentEvent.reader_status.status &&
+                Reader.ReaderStatus.NEED_CALIBRATION != enrollmentEvent.reader_status.status
+                ) {
+
+            enrollmentThread.cancel();
+            fingerprintReaderStatusLabel.setText("Capture cancelled due to an error, start again by clicking capture button.");
+        }
+    }
+
+    private void setEnrollment(EnrollmentThread.EnrollmentEvent enrollmentEvent) {
+        fingerprintEnrollmentMap.put(currentFingerType, enrollmentEvent);
+        /**
+         * If max number of fingerprints have been captured, if current enrollment finger type has been captured, remove it,
+         * else if finger print map has next, remove the next key, so we capture only two fingerprints
+         */
+
+        capturedFingerprintStatusLabel.setText("Captured " + fingerprintEnrollmentMap.size() + "/" + MAX_NUMBER_OF_FINGERPRINTS);
+        // reset current finger print type
+        selectFingerCombo.getSelectionModel().clearSelection();
+        currentFingerType = null;
+
+        if(fingerprintEnrollmentMap.size() == MAX_NUMBER_OF_FINGERPRINTS) {
+            selectFingerCombo.setDisable(true);
+            fingerprintReadersComboBox.setDisable(true);
+            captureFingerPrintButton.setDisable(true);
+            fingerprintReaderStatusLabel.setText("Captured required number of fingerprints, to recapture, click cancel.");
+        }
+
+    }
+
+    private void showImage(Reader.CaptureResult captureResult) {
+        if(captureResult != null && captureResult.image != null) {
+            /*
+            Fid.Fiv view = captureResult.image.getViews()[0];
+
+            final AtomicReference<WritableImage> ref = new AtomicReference<>();
+            BufferedImage img = new BufferedImage(view.getWidth(), view.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            img.getRaster().setDataElements(0, 0, view.getWidth(), view.getHeight(), view.getImageData());
+            ref.set(SwingFXUtils.toFXImage(img, ref.get()));
+            img.flush();
+            */
+            studentFingerprintImageView.setImage(ImageUtil.convertFidToJavaFXImage(captureResult.image));
+        }
     }
 }

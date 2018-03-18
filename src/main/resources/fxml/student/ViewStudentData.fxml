@@ -4,11 +4,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1">
@@ -217,7 +220,35 @@
           </Tab>
             <Tab text="Biometric Data">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <HBox fx:id="biometricMainHBox" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <VBox fx:id="passportImageVBox" prefHeight="200.0" prefWidth="300.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label maxWidth="1.7976931348623157E308" text="Student Image" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets left="10.0" top="10.0" />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fx:id="studentImageView" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="200.0" prefWidth="300.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="First Fingerprint: " VBox.vgrow="NEVER">
+                                 <VBox.margin>
+                                    <Insets top="10.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                              <Label text="Second Fingerprint:" />
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                </content>
             </Tab>
         </tabs>

@@ -1,23 +1,25 @@
 package com.edubreeze.model;
 
-import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
+import com.j256.ormlite.table.DatabaseTable;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
+@DatabaseTable(tableName = "students")
 public class Student {
 
     private static final String UPDATED_AT_COLUMNN_NAME = "updatedAt";
@@ -112,6 +114,12 @@ public class Student {
 
     @DatabaseField
     private Date lastSyncedAt;
+
+    @DatabaseField(dataType = DataType.BYTE_ARRAY)
+    byte[] studentImage;
+
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<StudentFingerprint> fingerprints;
 
     public Student() {
         // ORMLite needs a no-arg constructor
@@ -320,6 +328,10 @@ public class Student {
                 isValidString(contactPersonPhoneNumber) && isValidString(religion));
     }
 
+    public ForeignCollection<StudentFingerprint> getFingerprints() {
+        return fingerprints;
+    }
+
     public void save(User user) throws SQLException {
         LocalDateTime now = LocalDateTime.now();
         Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
@@ -463,6 +475,14 @@ public class Student {
 
     private boolean isValidString(String value) {
         return !(value == null || value.isEmpty());
+    }
+
+    public byte[] getStudentImage() {
+        return studentImage;
+    }
+
+    public void setStudentImage(byte[] studentImage) {
+        this.studentImage = studentImage;
     }
 
     @Override

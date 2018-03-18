@@ -1,7 +1,6 @@
 package com.edubreeze.database;
 
 import com.edubreeze.model.*;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
@@ -17,5 +16,6 @@ public class TableSchemaManager {
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), Student.class);
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), AppStatus.class);
         TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), StudentAcademicRecord.class);
+        TableUtils.createTableIfNotExists(databaseConnection.getConnectionSource(), StudentFingerprint.class);
     }
 }

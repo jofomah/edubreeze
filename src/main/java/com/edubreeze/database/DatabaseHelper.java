@@ -18,6 +18,7 @@ public class DatabaseHelper {
     private static Dao<Student, UUID> studentDao = null;
     private static Dao<AppStatus, String> appStatusDao = null;
     private static Dao<StudentAcademicRecord, UUID> studentAcademicPerformanceDao = null;
+    private static Dao<StudentFingerprint, UUID> studentFingerprintDao = null;
 
     public static DatabaseConnectionInterface getDatabaseConnection() throws SQLException {
         if (databaseConnection == null) {
@@ -71,5 +72,12 @@ public class DatabaseHelper {
         }
 
         return appStatusDao;
+    }
+
+    public static Dao<StudentFingerprint, UUID> getStudentFingerprintDao() throws SQLException {
+        if(studentFingerprintDao == null) {
+            studentFingerprintDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), StudentFingerprint.class);
+        }
+        return studentFingerprintDao;
     }
 }

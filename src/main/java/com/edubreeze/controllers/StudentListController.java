@@ -139,14 +139,11 @@ public class StudentListController implements Initializable {
 
         initializeStudentTable();
 
-        addStudentButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    Util.changeScreen((Stage) addStudentButton.getScene().getWindow(), AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
-                } catch (IOException ex) {
-                    Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Login screen.");
-                }
+        addStudentButton.setOnAction(event -> {
+            try {
+                Util.changeScreen((Stage) addStudentButton.getScene().getWindow(), AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Login screen.");
             }
         });
     }
@@ -228,7 +225,7 @@ public class StudentListController implements Initializable {
                                         try {
                                             Student student = Student.find(person.getAutoId());
 
-                                            if(student == null) {
+                                            if (student == null) {
                                                 Util.showInfo(
                                                         "Missing Student Data",
                                                         "Student: " + person.getAutoId() + " not found",
@@ -240,13 +237,29 @@ public class StudentListController implements Initializable {
                                             URL viewStudentDataFXMLURL = getClass().getResource(AppConfiguration.VIEW_STUDENT_DATA_SCREEN);
                                             Util.showViewStudentData(student, viewStudentDataFXMLURL);
 
-                                        } catch(SQLException ex) {
+                                        } catch (SQLException ex) {
                                             Util.showExceptionDialogBox(ex, "Get Student Record Error", "An error occurred while trying to fetch student.");
                                         }
                                     });
 
                                     editButton.setOnAction(event -> {
-                                        System.out.println("Set current student id and change to edit personal info");
+                                        Person person = getTableView().getItems().get(getIndex());
+                                        UUID currentStudentId = person.getAutoId();
+
+                                        AppConfiguration.setCurrentlyEditedStudentId(currentStudentId);
+
+                                        try {
+                                            Util.changeScreen(
+                                                    (Stage) studentListTableView.getScene().getWindow(),
+                                                    AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN
+                                            );
+                                        } catch (IOException ex) {
+                                            Util.showInfo(
+                                                    "Change Screen Error",
+                                                    "Could not load student personal information screen",
+                                                    "Changing to personal information screen from student list view failed"
+                                            );
+                                        }
                                     });
 
                                     setGraphic(cellHBoxPane);
@@ -271,16 +284,6 @@ public class StudentListController implements Initializable {
 
         for (Student student : studentSubList) {
 
-            Lga originLga = null;
-            School school = null;
-            try {
-                originLga = Lga.find(student.getLga().getId());
-                school = School.find(student.getSchool().getId());
-
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-
             Person personData = new Person(
                     student.getAutoId(),
                     student.getAdmissionNumber(),
@@ -290,8 +293,8 @@ public class StudentListController implements Initializable {
                     student.getGender(),
                     student.getCurrentClass(),
                     student.getDateEnrolled(),
-                    (school != null) ? school.getName() : "N/A",
-                    (originLga != null) ? originLga.getName() : "N/A"
+                    student.getSchool().getName(),
+                    student.getLga().getName()
             );
 
             studentDataModel.add(personData);
@@ -303,15 +306,15 @@ public class StudentListController implements Initializable {
     }
 
     private Pagination setPagination() {
-        Pagination pagination = new Pagination((students.size() / ROWS_PER_PAGE + 1), 0);
-        pagination.setPageFactory(new Callback<Integer, Node>() {
-            @Override
-            public Node call(Integer pageIndex) {
-                return createPage(pageIndex);
-            }
-        });
+        int currentPageIndex = 0;
+        int columnIndex = 0;
+        int rowIndex = 3;
+        int rowsToSpan = 1;
 
-        contentGridPane.add(pagination, 0, 3, GridPane.REMAINING, 1);
+        Pagination pagination = new Pagination((students.size() / ROWS_PER_PAGE + 1), currentPageIndex);
+        pagination.setPageFactory(pageIndex -> createPage(pageIndex));
+
+        contentGridPane.add(pagination, columnIndex, rowIndex, GridPane.REMAINING, rowsToSpan);
         return pagination;
     }
 
@@ -338,7 +341,7 @@ public class StudentListController implements Initializable {
             students.clear();
             students.addAll(studentSearchResult);
         } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
+            Util.showExceptionDialogBox(ex, "Search Student Data Error", "An error occurred while searching for student data");
         }
 
         setPagination();

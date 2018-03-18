@@ -36,6 +36,7 @@
                 <RowConstraints minHeight="200.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -61,7 +62,7 @@
                         <Insets />
                     </GridPane.margin>
                 </Label>
-                <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="137.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+                <Button fx:id="previousButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="137.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
@@ -86,12 +87,12 @@
                </viewport>
                 </ImageView>
                 <Label fx:id="fingerprintReaderStatusLabel" text="Status" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                <Button layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="263.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7">
+                <Button fx:id="saveAndExitButton" layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="263.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="8">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </Button>
-                <FlowPane prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                <FlowPane prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
                     <children>
                         <Button fx:id="captureFingerPrintButton" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" text="Capture Fingerprint" />
                   <Button fx:id="refreshFingerprintReadersButton" mnemonicParsing="false" prefHeight="25.0" text="Refresh Readers" />
@@ -102,7 +103,7 @@
                         </Button>
                     </children>
                 </FlowPane>
-                <FlowPane layoutX="598.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                <FlowPane layoutX="598.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                     <children>
                         <Button fx:id="captureImageButton" defaultButton="true" mnemonicParsing="false" prefHeight="25.0" prefWidth="150.0" text="Capture Image" />
                   <Button fx:id="cancelCaptureImageButton" mnemonicParsing="false" prefHeight="25.0" prefWidth="100.0" text="Cancel">
@@ -114,6 +115,8 @@
                 </FlowPane>
             <ComboBox fx:id="webcamsComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select webcam" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <ComboBox fx:id="fingerprintReadersComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select fingerprint reader.." GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <ComboBox fx:id="selectFingerCombo" prefHeight="25.0" prefWidth="228.0" promptText="Select Finger to be captured" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+            <Label fx:id="capturedFingerprintStatusLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Capture two fingers or select no finger to avoid capture" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
             </children>
         </GridPane>
     </center>

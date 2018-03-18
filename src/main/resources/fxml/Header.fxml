@@ -13,7 +13,7 @@
          <children>
               <ImageView fitHeight="75.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
                   <image>
-                      <Image url="@../images/logo.png" />
+                      <Image url="@../images/logo.jpg" />
                   </image>
               </ImageView>
             <Label layoutX="178.0" layoutY="14.0" prefHeight="27.0" prefWidth="341.0" text="Education Management Information System">

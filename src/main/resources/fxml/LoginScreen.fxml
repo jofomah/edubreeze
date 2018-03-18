@@ -22,10 +22,10 @@
     <center>
         <GridPane alignment="CENTER" styleClass="login-bg" stylesheets="@../styles/Styles.css" BorderPane.alignment="CENTER">
             <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="10.0" percentWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="30.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="10.0" percentWidth="15.0" prefWidth="100.0" />
+                <ColumnConstraints fillWidth="false" halignment="CENTER" hgrow="NEVER" minWidth="10.0" percentWidth="35.0" prefWidth="100.0" />
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" minWidth="10.0" percentWidth="25.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" percentHeight="20.0" prefHeight="30.0" vgrow="ALWAYS" />
@@ -48,17 +48,17 @@
                         <Font name="Arial Bold" size="14.0" />
                     </font>
                 </Label>
-                <TextField fx:id="usernameField" prefHeight="35.0" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
+                <TextField fx:id="usernameField" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>
                 </TextField>
-                <PasswordField fx:id="passwordField" prefHeight="35.0" prefWidth="180.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                <PasswordField fx:id="passwordField" prefHeight="35.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
                     <GridPane.margin>
                         <Insets top="10.0" />
                     </GridPane.margin>
                 </PasswordField>
-                <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleLoginButtonClick" prefHeight="35.0" prefWidth="180.0" text="Login" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="3" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
+                <Button fx:id="loginButton" alignment="CENTER" mnemonicParsing="false" onMouseClicked="#handleLoginButtonClick" prefHeight="35.0" prefWidth="200.0" text="Login" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="3" GridPane.valignment="TOP" GridPane.vgrow="NEVER">
                     <GridPane.margin>
                         <Insets />
                     </GridPane.margin>

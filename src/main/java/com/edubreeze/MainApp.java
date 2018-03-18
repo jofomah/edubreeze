@@ -15,6 +15,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import com.edubreeze.config.AppConfiguration;
@@ -37,6 +38,10 @@ public class MainApp extends Application {
         scene.getStylesheets().add(mainStyleSheetPath);
 
         stage.setTitle(AppConfiguration.APP_TITLE);
+
+
+        Image appIcon = new Image(getClass().getResourceAsStream(AppConfiguration.APP_ICON));
+        stage.getIcons().add(appIcon);
 
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getVisualBounds();

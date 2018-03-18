@@ -15,6 +15,7 @@ public class AppConfiguration {
     public static final String MAIN_STYLESHEET_PATH = "/styles/Styles.css";
     public static final String APP_TITLE = "EduBreeze - Easy to use Biometric Education Management Information System";
     public static final String LOADING_ICON = "/images/loading-icon.gif";
+    public static final String APP_ICON = "/images/logo.jpg";
     public static final String DATABASE_FILE = "/database/edubreeze.db";
     public static final String STUDENT_PERSONAL_INFO_SCREEN = "/fxml/student/StudentPersonalInfo.fxml";
     public static final String LOADING_SCREEN = "/fxml/LoadingScreen.fxml";

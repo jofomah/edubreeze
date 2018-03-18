@@ -1,8 +1,8 @@
 package com.edubreeze.controllers;
 
 import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.model.Student;
 import com.edubreeze.model.AcademicRecord;
+import com.edubreeze.model.Student;
 import com.edubreeze.model.StudentAcademicTerm;
 import com.edubreeze.model.properties.AcademicRecordProperty;
 import com.edubreeze.model.properties.StudentAcademicTermProperty;
@@ -15,8 +15,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -86,27 +88,7 @@ public class StudentAcademicPerformanceController implements Initializable {
 
         academicTermCombo.setConverter(new StudentAcademicTermStringConverter());
 
-
-        TableColumn subjectCol = new TableColumn("Subject");
-        subjectCol.setCellValueFactory(
-                new PropertyValueFactory<AcademicRecordProperty, String>("subject"));
-
-        TableColumn caCol = new TableColumn("C.A");
-        caCol.setCellValueFactory(
-                new PropertyValueFactory<AcademicRecordProperty, Integer>("caScore"));
-
-        TableColumn examCol = new TableColumn("Exam");
-        examCol.setCellValueFactory(
-                new PropertyValueFactory<AcademicRecordProperty, Integer>("examScore"));
-
-        TableColumn totalCol = new TableColumn("Total");
-        totalCol.setCellValueFactory(
-                new PropertyValueFactory<AcademicRecordProperty, Integer>("totalScore"));
-
-
-        studentAcademicRecordsTable.getColumns().addAll(
-                subjectCol, caCol, examCol, totalCol
-        );
+        studentAcademicRecordsTable.getColumns().addAll(AcademicRecordProperty.getAcademicRecordsTableColumns());
 
         caTextField.setTextFormatter(NumberStringFilteredConverter.getNumberFormatter());
         examTextField.setTextFormatter(NumberStringFilteredConverter.getNumberFormatter());

@@ -1,10 +1,7 @@
 package com.edubreeze.net;
 
-import com.edubreeze.model.State;
 import com.edubreeze.net.exceptions.ApiClientException;
 import org.json.JSONArray;
-
-import java.util.List;
 
 /**
  * An interface for connecting to remote server

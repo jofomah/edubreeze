@@ -8,15 +8,14 @@ import com.edubreeze.net.exceptions.ApiClientException;
 import com.edubreeze.service.ApplicationService;
 import com.edubreeze.service.LoginService;
 import com.edubreeze.utils.Util;
-import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public class LoadingScreenController implements Initializable  {

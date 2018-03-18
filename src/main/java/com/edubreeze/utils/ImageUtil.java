@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ImageUtil {

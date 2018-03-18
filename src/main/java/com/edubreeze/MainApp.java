@@ -1,26 +1,19 @@
 package com.edubreeze;
 
+import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.database.DatabaseConnectionInterface;
 import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.database.TableSchemaManager;
-import com.edubreeze.model.State;
 import com.edubreeze.utils.Util;
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.table.TableUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import com.edubreeze.config.AppConfiguration;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 

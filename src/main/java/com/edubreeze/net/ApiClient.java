@@ -1,7 +1,5 @@
 package com.edubreeze.net;
 
-import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.model.State;
 import com.edubreeze.net.exceptions.ApiClientException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -9,8 +7,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.util.List;
 
 public class ApiClient implements ClientInterface {
 

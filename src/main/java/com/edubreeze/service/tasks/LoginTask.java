@@ -2,10 +2,10 @@ package com.edubreeze.service.tasks;
 
 import com.edubreeze.model.User;
 import com.edubreeze.net.exceptions.ApiClientException;
-import com.edubreeze.service.exceptions.LoginFailedException;
-import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import com.edubreeze.service.LoginService;
+import com.edubreeze.service.exceptions.LoginFailedException;
 import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
+import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import javafx.concurrent.Task;
 
 import java.sql.SQLException;

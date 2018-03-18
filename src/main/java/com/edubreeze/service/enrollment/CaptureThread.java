@@ -1,6 +1,8 @@
 package com.edubreeze.service.enrollment;
 
-import com.digitalpersona.uareu.*;
+import com.digitalpersona.uareu.Fid;
+import com.digitalpersona.uareu.Reader;
+import com.digitalpersona.uareu.UareUException;
 import javafx.application.Platform;
 
 public class CaptureThread extends Thread {

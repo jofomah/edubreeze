@@ -1,9 +1,12 @@
 package com.edubreeze.model.properties;
 
-import com.edubreeze.model.StudentAcademicTerm;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AcademicRecordProperty {
     private final SimpleStringProperty academicTerm;
@@ -79,4 +82,37 @@ public class AcademicRecordProperty {
     public void setAcademicTerm(String academicTerm) {
         this.academicTerm.set(academicTerm);
     }
-}
+
+    public static List<TableColumn> getAcademicRecordsTableColumns() {
+        TableColumn academicTermCol = new TableColumn("Academic term");
+        academicTermCol.setCellValueFactory(
+                new PropertyValueFactory<AcademicRecordProperty, String>("academicTerm"));
+
+        TableColumn subjectCol = new TableColumn("Subject");
+        subjectCol.setCellValueFactory(
+                new PropertyValueFactory<AcademicRecordProperty, String>("subject"));
+
+        TableColumn caCol = new TableColumn("C.A");
+        caCol.setCellValueFactory(
+                new PropertyValueFactory<AcademicRecordProperty, Integer>("caScore"));
+
+        TableColumn examCol = new TableColumn("Exam");
+        examCol.setCellValueFactory(
+                new PropertyValueFactory<AcademicRecordProperty, Integer>("examScore"));
+
+        TableColumn totalCol = new TableColumn("Total");
+        totalCol.setCellValueFactory(
+                new PropertyValueFactory<AcademicRecordProperty, Integer>("totalScore"));
+
+        List<TableColumn> tableColumns = new ArrayList<>();
+
+        tableColumns.add(academicTermCol);
+        tableColumns.add(subjectCol);
+        tableColumns.add(caCol);
+        tableColumns.add(examCol);
+        tableColumns.add(totalCol);
+
+        return tableColumns;
+
+    }
+ }

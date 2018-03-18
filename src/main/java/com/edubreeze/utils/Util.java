@@ -2,6 +2,8 @@ package com.edubreeze.utils;
 
 import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.model.*;
+import com.edubreeze.model.properties.AcademicRecordProperty;
+import com.edubreeze.model.properties.StudentAcademicTermProperty;
 import com.edubreeze.service.enrollment.FingerPrintEnrollment;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -19,9 +21,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 public class Util {
 
@@ -42,6 +48,10 @@ public class Util {
                 GridPane personalDataGridPane = (GridPane) personalDataTab.getContent();
                 addPersonalData(student, personalDataGridPane);
 
+                Tab academicPerformanceTab = tabs.get(1);
+                HBox academicRecordHBox = (HBox) academicPerformanceTab.getContent();
+                addAcademicRecordData(student, academicRecordHBox);
+
                 Tab biometricDataTab = tabs.get(2);
                 HBox biometricMainHBox = (HBox)biometricDataTab.getContent();
                 addBiometricData(student, biometricMainHBox);
@@ -55,6 +65,26 @@ public class Util {
             }
 
         });
+    }
+
+    private static void addAcademicRecordData(Student student, HBox academicRecordHBox) {
+        int academicTermsTableIndex = 0;
+        int academicRecordsTableIndex = 1;
+
+        TableView academicTermsTable = (TableView) academicRecordHBox.getChildren().get(academicTermsTableIndex);
+        TableView academicRecordsTable = (TableView) academicRecordHBox.getChildren().get(academicRecordsTableIndex);
+
+        academicTermsTable.getColumns().addAll(StudentAcademicTermProperty.getAcademicTermTableColumns());
+        academicTermsTable.setItems(DataUtil.convertToAcademicTermTableRowData(new ArrayList<>(student.getAcademicTerms())));
+
+        academicRecordsTable.getColumns().addAll(AcademicRecordProperty.getAcademicRecordsTableColumns());
+        try{
+
+            academicRecordsTable.setItems(DataUtil.convertToAcademicRecordTableRowData(AcademicRecord.getByStudent(student)));
+        } catch (SQLException ex) {
+            showExceptionDialogBox(ex, "Render Academic Table Error", ex.getMessage());
+        }
+
     }
 
     private static void addBiometricData(Student student, HBox biometricMainHBox) {

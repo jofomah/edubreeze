@@ -1,7 +1,5 @@
 package com.edubreeze.controllers;
 
-import com.digitalpersona.uareu.Fid;
-import com.digitalpersona.uareu.Fmd;
 import com.digitalpersona.uareu.Reader;
 import com.digitalpersona.uareu.UareUException;
 import com.edubreeze.config.AppConfiguration;
@@ -9,7 +7,10 @@ import com.edubreeze.model.Student;
 import com.edubreeze.model.StudentFingerprint;
 import com.edubreeze.service.LoginService;
 import com.edubreeze.service.WebCamService;
-import com.edubreeze.service.enrollment.*;
+import com.edubreeze.service.enrollment.EnrollmentActionListener;
+import com.edubreeze.service.enrollment.EnrollmentThread;
+import com.edubreeze.service.enrollment.FingerPrintEnrollment;
+import com.edubreeze.service.enrollment.ReaderStringConverter;
 import com.edubreeze.utils.ImageUtil;
 import com.edubreeze.utils.Util;
 import com.edubreeze.utils.WebcamStringConverter;
@@ -32,7 +33,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -84,6 +84,9 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
 
     @FXML
     private Label capturedFingerprintStatusLabel;
+
+    @FXML
+    private Button gobackHomeButton;
 
     private ObservableList<Webcam> webcams = FXCollections.emptyObservableList();
     private Webcam webCam = null;
@@ -277,6 +280,14 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             startFingerprintCapture();
 
         }));
+
+        gobackHomeButton.setOnAction(event -> {
+            try {
+                Util.changeScreen((Stage) gobackHomeButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student Biometric screen.");
+            }
+        });
 
     }
 

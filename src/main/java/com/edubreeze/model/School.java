@@ -1,15 +1,12 @@
 package com.edubreeze.model;
 
-import com.edubreeze.config.AppConfiguration;
 import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 @DatabaseTable(tableName = "schools")
 public class School {

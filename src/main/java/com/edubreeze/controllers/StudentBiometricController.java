@@ -222,6 +222,24 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                 return;
             }
 
+            try {
+                currentStudent.save(LoginService.getCurrentLoggedInUser());
+            } catch (SQLException ex) {
+                Util.showExceptionDialogBox(
+                        ex,
+                        "Save Student Biometric Record Error",
+                        "An error occurred while trying to save student image data."
+                );
+                return;
+            }
+
+            try {
+                Util.changeScreen((Stage) saveAndExitButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
+            } catch (IOException ex) {
+                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
+            }
+
+            /*
             List<StudentFingerprint> studentFingerprints = prepareStudentFingerprints();
             if(!canSaveStudentFingerprints(studentFingerprints)) {
                 Util.showErrorDialog(
@@ -259,12 +277,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                 );
                 return;
             }
-
-            try {
-                Util.changeScreen((Stage) saveAndExitButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
-            } catch (IOException ex) {
-                Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
-            }
+            */
         });
 
         List<FingerPrintEnrollment.FingerType> fingerTypes = Arrays.asList(FingerPrintEnrollment.FingerType.values());

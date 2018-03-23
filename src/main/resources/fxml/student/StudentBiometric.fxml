@@ -1,115 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Point3D?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.StudentBiometricController">
-    <top>
-        <fx:include source="../Header.fxml" />
-    </top>
-    <bottom>
-        <fx:include source="../Footer.fxml" />
-    </bottom>
-    <center>
-        <GridPane alignment="CENTER" maxHeight="1000.0" maxWidth="1000.0" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1">
-            <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0" percentWidth="20.0" prefWidth="202.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="20.0" percentWidth="30.0" prefWidth="235.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="30.0" prefWidth="134.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-                <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="200.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-                <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title" stylesheets="@../../styles/Styles.css" text="Student's Biometric Information" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                    <font>
-                        <Font name="Arial Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Label text="Picture" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                </Label>
-                <Label layoutX="319.0" layoutY="65.0" text="Fingerprints" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                </Label>
-                <Label fx:id="webCamStatusLabel" maxWidth="1.7976931348623157E308" text="Status:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                </Label>
-                <Button fx:id="previousButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                </Button>
-                <ImageView fx:id="studentPassportImageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                    <image>
-                        <Image url="@../../images/passport-placeholder.png" />
-                    </image>
-                </ImageView>
-                <ImageView fx:id="studentFingerprintImageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
-                    <image>
-                        <Image url="@../../images/fingerprint-placeholder.jpg" />
-                    </image>
-               <rotationAxis>
-                  <Point3D />
-               </rotationAxis>
-               <viewport>
-                  <Rectangle2D />
-               </viewport>
-                </ImageView>
-                <Label fx:id="fingerprintReaderStatusLabel" text="Status" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
-                <Button fx:id="saveAndExitButton" defaultButton="true" layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="260.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="8">
-                    <GridPane.margin>
-                        <Insets />
-                    </GridPane.margin>
-                </Button>
-                <FlowPane prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
-                    <children>
-                        <Button fx:id="captureFingerPrintButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Capture Fingerprint" />
-                  <Button fx:id="refreshFingerprintReadersButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Refresh Readers" />
-                        <Button mnemonicParsing="false" prefHeight="35.0" text="Cancel">
-                            <FlowPane.margin>
-                                <Insets left="5.0" />
-                            </FlowPane.margin>
+
+
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.StudentBiometricController">
+   <content>
+      <BorderPane maxHeight="1000000.0" maxWidth="100000.0" minHeight="-Infinity" minWidth="-Infinity">
+          <top>
+              <fx:include source="../Header.fxml" />
+          </top>
+          <bottom>
+              <fx:include source="../Footer.fxml" />
+          </bottom>
+          <center>
+              <GridPane alignment="CENTER" maxHeight="1000.0" maxWidth="1000.0" minHeight="-Infinity" minWidth="-Infinity">
+                  <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0" percentWidth="20.0" prefWidth="202.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="20.0" percentWidth="30.0" prefWidth="235.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="30.0" prefWidth="134.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                      <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="200.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" percentHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  </rowConstraints>
+                  <children>
+                      <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title" stylesheets="@../../styles/Styles.css" text="Student's Biometric Information" GridPane.columnSpan="2147483647" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                          <font>
+                              <Font name="Arial Bold" size="14.0" />
+                          </font>
+                      </Label>
+                      <Label text="Picture" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                      </Label>
+                      <Label layoutX="319.0" layoutY="65.0" text="Fingerprints" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                      </Label>
+                      <Label fx:id="webCamStatusLabel" maxWidth="1.7976931348623157E308" text="Status:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="4" GridPane.valignment="CENTER">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                      </Label>
+                      <Button fx:id="previousButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="140.0" text="Previous" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                      </Button>
+                      <ImageView fx:id="studentPassportImageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                          <image>
+                              <Image url="@../../images/passport-placeholder.png" />
+                          </image>
+                      </ImageView>
+                      <ImageView fx:id="studentFingerprintImageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.valignment="CENTER" GridPane.vgrow="NEVER">
+                          <image>
+                              <Image url="@../../images/fingerprint-placeholder.jpg" />
+                          </image>
+                     <rotationAxis>
+                        <Point3D />
+                     </rotationAxis>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                      </ImageView>
+                      <Label fx:id="fingerprintReaderStatusLabel" text="Status" GridPane.columnIndex="2" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                      <Button fx:id="saveAndExitButton" defaultButton="true" layoutX="598.0" layoutY="345.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="260.0" text="Save and Exit" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="8">
+                          <GridPane.margin>
+                              <Insets />
+                          </GridPane.margin>
+                      </Button>
+                      <FlowPane prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="6" GridPane.valignment="CENTER">
+                          <children>
+                              <Button fx:id="captureFingerPrintButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Capture Fingerprint" />
+                        <Button fx:id="refreshFingerprintReadersButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" text="Refresh Readers" />
+                              <Button mnemonicParsing="false" prefHeight="35.0" text="Cancel">
+                                  <FlowPane.margin>
+                                      <Insets left="5.0" />
+                                  </FlowPane.margin>
+                              </Button>
+                          </children>
+                      </FlowPane>
+                      <FlowPane layoutX="598.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                          <children>
+                              <Button fx:id="captureImageButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" text="Capture Image" />
+                        <Button fx:id="cancelCaptureImageButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Cancel">
+                           <FlowPane.margin>
+                              <Insets left="5.0" />
+                           </FlowPane.margin>
                         </Button>
-                    </children>
-                </FlowPane>
-                <FlowPane layoutX="598.0" layoutY="323.0" prefHeight="25.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                    <children>
-                        <Button fx:id="captureImageButton" defaultButton="true" mnemonicParsing="false" prefHeight="35.0" prefWidth="150.0" text="Capture Image" />
-                  <Button fx:id="cancelCaptureImageButton" mnemonicParsing="false" prefHeight="35.0" prefWidth="100.0" text="Cancel">
-                     <FlowPane.margin>
-                        <Insets left="5.0" />
-                     </FlowPane.margin>
-                  </Button>
-                    </children>
-                </FlowPane>
-            <ComboBox fx:id="webcamsComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select webcam" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <ComboBox fx:id="fingerprintReadersComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select fingerprint reader.." GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <ComboBox fx:id="selectFingerCombo" prefHeight="25.0" prefWidth="228.0" promptText="Select Finger to be captured" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-            <Label fx:id="capturedFingerprintStatusLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Capture two fingers or select no finger to avoid capture" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-            <Button fx:id="gobackHomeButton" mnemonicParsing="false" prefHeight="35.0" text="Go Back to Home" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
-            </children>
-        </GridPane>
-    </center>
-</BorderPane>
+                          </children>
+                      </FlowPane>
+                  <ComboBox fx:id="webcamsComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select webcam" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="fingerprintReadersComboBox" prefHeight="25.0" prefWidth="225.0" promptText="Please select fingerprint reader.." GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="selectFingerCombo" prefHeight="25.0" prefWidth="228.0" promptText="Select Finger to be captured" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <Label fx:id="capturedFingerprintStatusLabel" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Capture two fingers or select no finger to avoid capture" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.hgrow="ALWAYS" GridPane.rowIndex="7" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                  <Button fx:id="gobackHomeButton" mnemonicParsing="false" prefHeight="35.0" text="Go Back to Home" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                  </children>
+              </GridPane>
+          </center>
+      </BorderPane>
+   </content>
+</ScrollPane>

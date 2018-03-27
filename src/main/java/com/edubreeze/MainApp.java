@@ -1,9 +1,11 @@
 package com.edubreeze;
 
 import com.edubreeze.config.AppConfiguration;
+import com.edubreeze.controllers.HeaderController;
 import com.edubreeze.database.DatabaseConnectionInterface;
 import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.database.TableSchemaManager;
+import com.edubreeze.service.tasks.MonitorInternetConnectionTask;
 import com.edubreeze.utils.Util;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +69,11 @@ public class MainApp extends Application {
             Util.showExceptionDialogBox(ex, "Database Setup Error", "An error occurred while initializing app database.");
         }
 
+        /**
+         * Start network changes detector
+         */
+        startNetworkMonitoringTask();
+
         // load app GUI
         try {
 
@@ -78,7 +85,10 @@ public class MainApp extends Application {
                     "A runtime error occurred."
             );
         }
-
     }
 
+    private static void startNetworkMonitoringTask() {
+        MonitorInternetConnectionTask networkTask = new MonitorInternetConnectionTask();
+        networkTask.start();
+    }
 }

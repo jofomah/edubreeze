@@ -16,13 +16,14 @@ import java.util.Map;
 
 public class ApiClient implements ClientInterface {
 
+    public static final String DOMAIN_NAME = "katsina-edubreeze.ng";
     private static final String SIGN_IN_ENDPOINT = "/signin";
     private static final String STATES_ENDPOINT = "/getStates";
     private static final String SCHOOLS_BY_LGA = "/getSchoolsByLga/";
     private static final String SCHOOLS_BY_STATE = "/getSchoolsByState/";
     private static final String PUSH_STUDENT = "/pushStudent";
     private static final String STUDENTS_BY_SCHOOL_ID = "/getStudentsBySchool/";
-    private static final String API_BASE_URL = "http://katsina-edubreeze.ng/Webservice";
+    private static final String API_BASE_URL = "http://" + DOMAIN_NAME + "/Webservice";
 
     private String apiBaseUrl;
 

@@ -41,6 +41,9 @@ public class AppConfiguration {
     public static final String CHANGE_SCREEN_ERROR_HEADER = "Change Screen Error";
     public static final String CHANGE_SCREEN_ERROR_DETAIL = "An error occurred when trying to change screen.";
     public static final String ADD_SUBJECT_MANUALLY = "Add subject manually";
+    public static final String UNKNOWN_NETWORK_STATUS_ICON = "/images/connection_unknown.png";
+    public static final String CONNECTION_ON_ICON = "/images/connection_on.png";
+    public static final String CONNECTION_OFF_ICON = "/images/connection_off.png";
 
     private static UUID currentStudentId;
     private static int currentSchoolId;

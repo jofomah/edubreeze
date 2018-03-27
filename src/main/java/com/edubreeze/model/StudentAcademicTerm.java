@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
@@ -170,7 +171,22 @@ public class StudentAcademicTerm {
         // always update updatedBy
         setUpdatedBy(user.getUsername());
 
+        /**
+         * We check if there is an existing students academic record that matches new academic record's year, term and
+         * student id, if so, we update that to avoid duplicate.
+         */
         Dao<StudentAcademicTerm, UUID> studentAcademicTermDao = DatabaseHelper.getStudentAcademicTermDao();
+
+        QueryBuilder<StudentAcademicTerm, UUID> qb = studentAcademicTermDao.queryBuilder();
+        qb.where()
+                .and().eq("student_id", this.getStudent().getAutoId())
+                .and().eq("year", this.getYear())
+                .and().eq("term", this.getTerm());
+
+        StudentAcademicTerm temp = qb.queryForFirst();
+        if(temp != null && this.getId() == null) {
+            this.setId(temp.getId());
+        }
 
         studentAcademicTermDao.createOrUpdate(this);
     }

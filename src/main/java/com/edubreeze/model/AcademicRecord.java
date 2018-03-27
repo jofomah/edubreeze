@@ -3,6 +3,7 @@ package com.edubreeze.model;
 import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
@@ -169,6 +170,20 @@ public class AcademicRecord {
         setUpdatedBy(user.getUsername());
 
         Dao<AcademicRecord, UUID> academicRecordDao = DatabaseHelper.getAcademicRecordDao();
+
+        /**
+         * we check for existing academic records where academic term and subject matches new record and update
+         * instead of creating new one.
+         */
+        QueryBuilder<AcademicRecord, UUID> qb = academicRecordDao.queryBuilder();
+        qb.where()
+                .and().eq("academic_term_id", this.getAcademicTerm().getId())
+                .and().eq("subject", this.getSubject());
+
+        AcademicRecord temp = qb.queryForFirst();
+        if(temp != null && this.getId() == null) {
+            this.setId(temp.getId());
+        }
 
         academicRecordDao.createOrUpdate(this);
     }

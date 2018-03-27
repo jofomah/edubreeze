@@ -39,3 +39,9 @@
     -fx-background-image: url("../images/loading-progress-indicator.gif");
     -fx-background-repeat: no-repeat;
 }
+
+.image-view-wrapper:border {
+    -fx-border-color: white;
+    -fx-border-style: solid;
+    -fx-border-width: 5;
+}

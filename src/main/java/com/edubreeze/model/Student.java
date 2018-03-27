@@ -1,6 +1,7 @@
 package com.edubreeze.model;
 
 import com.edubreeze.database.DatabaseHelper;
+import com.edubreeze.model.exceptions.MissingStudentDataException;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class Student {
 
     private static final String UPDATED_AT_COLUMN_NAME = "updatedAt";
+    private static final String SYNCED_AT_COLUMN_NAME = "lastSyncedAt";
 
     @DatabaseField(generatedId = true, allowGeneratedIdInsert = true)
     private UUID autoId;
@@ -126,6 +128,10 @@ public class Student {
 
     public Student() {
         // ORMLite needs a no-arg constructor
+    }
+
+    public void setAutoId(UUID autoId) {
+        this.autoId = autoId;
     }
 
     public String getFirstName() {
@@ -339,6 +345,13 @@ public class Student {
         return fingerprints;
     }
 
+    public void savePullSync() throws SQLException {
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+
+        studentDao.createOrUpdate(this);
+        studentDao.createOrUpdate(this);
+    }
+
     public void save(User user) throws SQLException {
         LocalDateTime now = LocalDateTime.now();
         Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
@@ -373,10 +386,11 @@ public class Student {
         return DatabaseHelper.getStudentDao().queryForId(studentId);
     }
 
-    public static List<Student> searchBy(State state, Lga lga, School school, String searchKeyword) throws SQLException {
+    public static List<Student> searchBy(State state, Lga lga, School school, String searchKeyword, String studentClass, String classType) throws SQLException {
         Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
 
-        if (state == null && lga == null && school == null && (searchKeyword == null || searchKeyword.isEmpty())) {
+        if (state == null && lga == null && school == null && (searchKeyword == null || searchKeyword.isEmpty()) &&
+                (studentClass == null || studentClass.isEmpty()) && (classType == null || classType.isEmpty()) ) {
             return getAll();
         }
 
@@ -395,6 +409,16 @@ public class Student {
         } else {
             // if keyword is not set, set to all student record, before filtering by school, lga, state in that order.
             where.isNotNull("autoId");
+        }
+
+        if(studentClass != null && !studentClass.isEmpty()) {
+            where.and().eq("currentClass", studentClass.trim());
+
+        }
+
+        if(classType != null && !classType.isEmpty()) {
+            where.and().eq("classSectionType", classType.trim());
+
         }
 
         String idColumn = "id";
@@ -490,6 +514,59 @@ public class Student {
 
     public void setStudentImage(byte[] studentImage) {
         this.studentImage = studentImage;
+    }
+
+    public static void saveSyncResult (UUID studentId, Date syncedAt) throws SQLException, MissingStudentDataException {
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+
+        Student student = studentDao.queryForId(studentId);
+        if(student == null) {
+            throw new MissingStudentDataException("Student with Id : " + studentId + " could not be found on local database.");
+        }
+
+        student.setLastSyncedAt(syncedAt);
+
+        studentDao.createOrUpdate(student);
+    }
+
+    public boolean hasSynced() {
+        return (updatedAt != null && lastSyncedAt != null && updatedAt.compareTo(lastSyncedAt) < 0);
+    }
+
+    public static List<Student> getStudentsDueForSync() throws  SQLException{
+        Dao<Student, UUID> studentDao = DatabaseHelper.getStudentDao();
+        QueryBuilder<Student, UUID> studentQueryBuilder = studentDao.queryBuilder();
+
+        Student oldestSyncedStudent = studentQueryBuilder
+                .selectColumns(SYNCED_AT_COLUMN_NAME)
+                .groupBy(SYNCED_AT_COLUMN_NAME)
+                .queryForFirst();
+
+        Date oldestLastSyncedAt = oldestSyncedStudent.getLastSyncedAt();
+
+        // reset student query builder
+        studentQueryBuilder.reset();
+
+        //track syncedAt time here
+
+        //TODO: fetch records due for sync,
+        // students with last modified >= last_synced or syncedAt does not exists, each related student records, modified at > synced at.
+        // if a student does not have syncedAt, pick it, syncedAt < modified_at or any of its related items modified at, pick it.
+
+        /**
+         * get all students due for sync, a student is due for sync if its, lastSyncedAt is null i.e has not been synced
+         * or at least synced successfully, then if it has been synced successfully, it is due for sync if its lastSyncedAt is
+         * less than last modified date.
+         */
+        Where<Student, UUID> studentWhere = studentQueryBuilder.where();
+        studentWhere.isNull(SYNCED_AT_COLUMN_NAME);
+
+        if(oldestLastSyncedAt != null) {
+            studentWhere.or()
+                    .gt(UPDATED_AT_COLUMN_NAME, oldestLastSyncedAt);
+        }
+
+        return studentQueryBuilder.query();
     }
 
     @Override

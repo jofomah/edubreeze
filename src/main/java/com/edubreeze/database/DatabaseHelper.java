@@ -1,7 +1,6 @@
 package com.edubreeze.database;
 
 import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.database.dao.observers.StudentDaoObserver;
 import com.edubreeze.model.*;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
@@ -61,7 +60,6 @@ public class DatabaseHelper {
     public static Dao<Student, UUID> getStudentDao() throws SQLException {
         if (studentDao == null) {
             studentDao = DaoManager.createDao(getDatabaseConnection().getConnectionSource(), Student.class);
-            studentDao.registerObserver(new StudentDaoObserver());
         }
 
         return studentDao;

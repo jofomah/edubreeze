@@ -56,6 +56,10 @@ public class State {
         return stateDao.queryForAll();
     }
 
+    public static State find(int stateId) throws SQLException{
+        return  DatabaseHelper.getStateDao().queryForId(stateId);
+    }
+
     @Override
     public int hashCode() {
         return name.hashCode();

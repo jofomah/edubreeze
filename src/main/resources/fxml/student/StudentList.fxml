@@ -1,47 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.StudentListController">
-    <top>
-        <fx:include source="../Header.fxml" />
-    </top>
-    <bottom>
-        <fx:include source="../Footer.fxml" />
-    </bottom>
-    <center>
-        <GridPane fx:id="contentGridPane" alignment="CENTER" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-            <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0" percentWidth="20.0" prefWidth="202.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" percentWidth="20.0" prefWidth="131.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="20.0" prefWidth="134.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
-            <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="85.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
-            </rowConstraints>
-            <children>
-                <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title" stylesheets="@../../styles/Styles.css" text="Student's List" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
-                    <font>
-                        <Font name="Arial Bold" size="14.0" />
-                    </font>
-                </Label>
-            <Label text="Select state:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
-            <Label text="Select LGA:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Label text="Select School:" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <Label text="Student Name:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
-            <ComboBox fx:id="selectStateComboBox" prefWidth="150.0" promptText="Please select state" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <ComboBox fx:id="selectLgaCombox" layoutX="10.0" layoutY="228.0" prefWidth="150.0" promptText="Please select LGA" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <ComboBox fx:id="selectSchoolComboBox" prefWidth="150.0" promptText="Please select school" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <TextField fx:id="searchStudentTextField" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="searchStudentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#handleSearchButtonClick" text="Search" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
-            <Button fx:id="addStudentButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Student" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
-            </children>
-        </GridPane>
-    </center>
-</BorderPane>
+<ScrollPane fitToHeight="true" fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.StudentListController">
+   <content>
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity">
+          <top>
+              <fx:include source="../Header.fxml" />
+          </top>
+          <bottom>
+              <fx:include source="../Footer.fxml" />
+          </bottom>
+          <center>
+              <GridPane fx:id="contentGridPane" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0">
+                  <columnConstraints>
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="228.0" minWidth="10.0" percentWidth="20.0" prefWidth="202.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="131.0" minWidth="10.0" percentWidth="20.0" prefWidth="131.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="134.0" minWidth="10.0" percentWidth="20.0" prefWidth="134.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
+                      <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="263.0" minWidth="10.0" percentWidth="20.0" prefWidth="235.0" />
+                  </columnConstraints>
+                  <rowConstraints>
+                      <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="5.0" prefHeight="30.0" valignment="CENTER" vgrow="NEVER" />
+                  <RowConstraints fillHeight="false" minHeight="10.0" percentHeight="80.0" prefHeight="30.0" valignment="CENTER" vgrow="ALWAYS" />
+                  </rowConstraints>
+                  <children>
+                      <Label alignment="TOP_CENTER" contentDisplay="TOP" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="20.0" prefWidth="600.0" styleClass="section-title" stylesheets="@../../styles/Styles.css" text="Student's List" textAlignment="CENTER" GridPane.columnSpan="2147483647" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                          <font>
+                              <Font name="Arial Bold" size="14.0" />
+                          </font>
+                      </Label>
+                  <Label text="State:" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                  <Label text="LGA:" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label text="School:" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label text="Student Name:" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="selectStateComboBox" prefWidth="150.0" promptText="Please select state" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="selectLgaCombo" layoutX="10.0" layoutY="228.0" prefWidth="150.0" promptText="Please select LGA" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="selectSchoolComboBox" prefWidth="150.0" promptText="Please select school" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <TextField fx:id="searchStudentTextField" GridPane.columnIndex="3" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></TextField>
+                  <Button fx:id="searchStudentButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onMouseClicked="#handleSearchButtonClick" text="Search" GridPane.columnIndex="6" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                  <Button fx:id="addStudentButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Student" GridPane.columnIndex="6" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
+                  <ProgressBar fx:id="pullSyncProgressBar" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </ProgressBar>
+                  <Button fx:id="pullStudentButton" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#fetchStudentsBySchool" text="Pull School  Students" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="10.0" top="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Label maxWidth="1.7976931348623157E308" text="Pull students progress status" GridPane.halignment="LEFT" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                  <Label maxWidth="1.7976931348623157E308" text="Class Type:" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <Label maxWidth="1.7976931348623157E308" text="Class:" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                  <ComboBox fx:id="classComboBox" prefWidth="150.0" promptText="Select class" GridPane.columnIndex="4" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="classTypeCombo" prefWidth="150.0" promptText="Select class type" GridPane.columnIndex="5" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+                  <Button fx:id="clearFiltersButton" cancelButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Clear Filters" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets top="10.0" />
+                     </GridPane.margin></Button>
+                  </children>
+              </GridPane>
+          </center>
+      </BorderPane>
+   </content>
+</ScrollPane>

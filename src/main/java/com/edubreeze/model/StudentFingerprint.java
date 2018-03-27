@@ -127,6 +127,14 @@ public class StudentFingerprint {
                 fmdBytes != null && fmdBytes.length > 0 && student != null);
     }
 
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
     public void save(User user) throws SQLException {
         LocalDateTime now = LocalDateTime.now();
         Instant instant = now.atZone(ZoneId.systemDefault()).toInstant();
@@ -146,6 +154,12 @@ public class StudentFingerprint {
         // always update updatedBy
         setUpdatedBy(user.getUsername());
 
+        Dao<StudentFingerprint, UUID> studentFingerprintDao = DatabaseHelper.getStudentFingerprintDao();
+
+        studentFingerprintDao.createOrUpdate(this);
+    }
+
+    public void savePullSync() throws SQLException {
         Dao<StudentFingerprint, UUID> studentFingerprintDao = DatabaseHelper.getStudentFingerprintDao();
 
         studentFingerprintDao.createOrUpdate(this);

@@ -69,7 +69,9 @@ public class MainApp extends Application {
 
         // load app GUI
         try {
+
             launch(args);
+
         } catch (Exception ex) {
             Util.showExceptionDialogBox(ex,
                     "App Launch Error",

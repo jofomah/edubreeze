@@ -173,6 +173,12 @@ public class AcademicRecord {
         academicRecordDao.createOrUpdate(this);
     }
 
+    public void savePullSync() throws SQLException {
+        Dao<AcademicRecord, UUID> academicRecordDao = DatabaseHelper.getAcademicRecordDao();
+
+        academicRecordDao.createOrUpdate(this);
+    }
+
     public static List<AcademicRecord> getByStudent(Student student) throws SQLException{
         Dao<AcademicRecord, UUID> academicRecordDao = DatabaseHelper.getAcademicRecordDao();
         boolean isAscendingOrder = false;

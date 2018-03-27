@@ -2,17 +2,14 @@ package com.edubreeze.net;
 
 import com.edubreeze.net.exceptions.ApiClientException;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * An interface for connecting to remote server
  */
 public interface ClientInterface {
-    /**
-     * Fetches a student resource object or null
-     * @param int studentId
-     * @return Object|null
-     */
-    public Object getStudent(int studentId);
+
+    public JSONObject pushStudent(String apiToken, JSONObject payload) throws ApiClientException;
 
     public String login(String username, String password) throws ApiClientException;
 
@@ -21,5 +18,7 @@ public interface ClientInterface {
     public JSONArray getSchoolsByLga(String apiToken, int lgaId) throws ApiClientException;
 
     public JSONArray getSchoolsByState(String apiToken, int stateId) throws ApiClientException;
+
+    public JSONArray getStudentsBySchool(String apiToken, int schoolId) throws ApiClientException;
 
 }

@@ -61,7 +61,6 @@ public class LoginController implements Initializable {
          * set login success callback
          */
         loginTask.setOnSucceeded(workStateEvent -> {
-            enableLoginForm(loginBtnContentDisplay, loginIconImage, loginBtnText);
             User loggedInUser = (User) workStateEvent.getSource().getValue();
 
             ApplicationService appService = new ApplicationService(loggedInUser.getApiToken(), new ApiClient());
@@ -69,7 +68,9 @@ public class LoginController implements Initializable {
             try {
                 Stage screenStage = (Stage) loginButton.getScene().getWindow();
                 if (appService.hasCompletedInitialSync()) {
-                   Util.changeScreen(screenStage, AppConfiguration.STUDENT_LIST_SCREEN);
+
+                    Util.changeScreen(screenStage, AppConfiguration.STUDENT_LIST_SCREEN);
+
                 } else {
                     Util.changeScreen(screenStage, AppConfiguration.LOADING_SCREEN);
                 }
@@ -87,6 +88,8 @@ public class LoginController implements Initializable {
                         AppConfiguration.CHANGE_SCREEN_ERROR_HEADER,
                         AppConfiguration.CHANGE_SCREEN_ERROR_DETAIL
                 );
+            } finally {
+                enableLoginForm(loginBtnContentDisplay, loginIconImage, loginBtnText);
             }
 
         });

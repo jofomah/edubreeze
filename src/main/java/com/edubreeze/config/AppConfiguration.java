@@ -10,12 +10,16 @@ import java.util.*;
 
 public class AppConfiguration {
 
+    public static final String VERSION_NO = "1.5.0";
     public static final String DATE_PATTERN_DD_MM_YYYY = "dd/MM/yyyy";
     public static final String LOGIN_SCREEN_PATH = "/fxml/LoginScreen.fxml";
     public static final String MAIN_STYLESHEET_PATH = "/styles/Styles.css";
     public static final String APP_TITLE = "EduBreeze - Easy to use Biometric Education Management Information System";
     public static final String LOADING_ICON = "/images/loading-icon.gif";
     public static final String APP_ICON = "/images/logo.jpg";
+    public static final String SYNCED_ICON = "/images/synced-icon.png";
+    public static final String NOT_SYNCED_ICON = "/images/not-synced-icon.png";
+    public static final String PULL_SYNC_ICON = "/images/pull-sync-icon.png";
     public static final String DATABASE_FILE = "/database/edubreeze.db";
     public static final String STUDENT_PERSONAL_INFO_SCREEN = "/fxml/student/StudentPersonalInfo.fxml";
     public static final String LOADING_SCREEN = "/fxml/LoadingScreen.fxml";

@@ -91,7 +91,7 @@ public class Util {
         byte[] studentImageBytes = student.getStudentImage();
         Image studentImage = null;
         HashMap<FingerPrintEnrollment.FingerType, Image> fingerprintsImage = new HashMap<>();
-        if(studentImageBytes != null) {
+        if(studentImageBytes != null && studentImageBytes.length > 0) {
             try {
                 studentImage = ImageUtil.convertToImage(studentImageBytes);
             } catch (IOException ex) {

@@ -2,7 +2,9 @@ package com.edubreeze.model;
 
 import com.edubreeze.database.DatabaseHelper;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.sql.SQLException;
@@ -46,6 +48,9 @@ public class StudentAcademicTerm {
 
     @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
     private Student student;
+
+    @ForeignCollectionField(eager = false)
+    private ForeignCollection<AcademicRecord> academicRecords;
 
     public StudentAcademicTerm() {
         // no args constructor required by ORMLite
@@ -138,6 +143,10 @@ public class StudentAcademicTerm {
         this.student = student;
     }
 
+    public ForeignCollection<AcademicRecord> getAcademicRecords() {
+        return academicRecords;
+    }
+
     public boolean canSave() {
         return (term != null && !term.isEmpty() && year != null && !year.isEmpty() && student != null);
     }
@@ -161,6 +170,12 @@ public class StudentAcademicTerm {
         // always update updatedBy
         setUpdatedBy(user.getUsername());
 
+        Dao<StudentAcademicTerm, UUID> studentAcademicTermDao = DatabaseHelper.getStudentAcademicTermDao();
+
+        studentAcademicTermDao.createOrUpdate(this);
+    }
+
+    public void savePullSync() throws SQLException {
         Dao<StudentAcademicTerm, UUID> studentAcademicTermDao = DatabaseHelper.getStudentAcademicTermDao();
 
         studentAcademicTermDao.createOrUpdate(this);

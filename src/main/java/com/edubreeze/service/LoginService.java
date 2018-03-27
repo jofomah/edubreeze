@@ -10,6 +10,7 @@ import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
 import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
+import javafx.beans.property.SimpleObjectProperty;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
@@ -19,6 +20,8 @@ public class LoginService {
     private ClientInterface apiClient;
 
     private static User currentLoggedInUser = null;
+
+    public static final SimpleObjectProperty<User> currentLoggedInUserProperty = new SimpleObjectProperty<>();
 
     public LoginService(ClientInterface apiClient) {
         this.apiClient = apiClient;
@@ -30,6 +33,12 @@ public class LoginService {
 
     public static void setCurrentLoggedInUser(User user) {
         currentLoggedInUser = user;
+
+        currentLoggedInUserProperty.set(currentLoggedInUser);
+    }
+
+    public static SimpleObjectProperty<User> getCurrentLoggedInUserProperty() {
+        return currentLoggedInUserProperty;
     }
 
     public String login(String email, String password) throws ApiClientException, MissingRequiredCredentialsException, WrongLoginCredentialsException {

@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<AnchorPane id="header" prefHeight="75.0" prefWidth="600.0" styleClass="header-bg" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.FXMLController">
-    <children>
-      <Pane prefHeight="75.0" prefWidth="600.0">
+<HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="75.0" prefWidth="600.0" styleClass="header-bg" stylesheets="@../styles/Styles.css" xmlns="http://javafx.com/javafx/8.0.152" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.edubreeze.controllers.HeaderController">
+   <children>
+      <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+         <HBox.margin>
+            <Insets right="10.0" />
+         </HBox.margin>
+         <image>
+            <Image url="@../images/logo.jpg" />
+         </image>
+      </ImageView>
+      <Label maxWidth="1.7976931348623157E308" text="Education Management Information System" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets top="20.0" />
+         </HBox.margin>
+          <font>
+              <Font name="System Bold" size="16.0" />
+          </font>
+      </Label>
+      <VBox maxWidth="1.7976931348623157E308" prefHeight="300.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
          <children>
-              <ImageView fitHeight="75.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                      <Image url="@../images/logo.jpg" />
-                  </image>
-              </ImageView>
-            <Label layoutX="178.0" layoutY="14.0" prefHeight="27.0" prefWidth="341.0" text="Education Management Information System">
+            <ImageView fitHeight="35.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+            <Label fx:id="appStatusLabel" alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets right="10.0" top="10.0" />
+               </VBox.margin>
                <font>
-                  <Font name="System Bold" size="16.0" />
+                  <Font name="System Bold" size="12.0" />
                </font>
             </Label>
          </children>
-      </Pane>
-    </children>
-</AnchorPane>
+      </VBox>
+   </children>
+</HBox>

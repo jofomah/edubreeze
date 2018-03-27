@@ -44,7 +44,6 @@ public class LoginTask extends Task<User> {
             loggedInUser = loginService.saveValidLogin(username, password, apiToken);
 
         } catch(ApiClientException ex) {
-            ExceptionTracker.track(ex);
             // API error, could be offline, try offline login
             loggedInUser = loginService.loginOffline(username, password);
 

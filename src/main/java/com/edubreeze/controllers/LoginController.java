@@ -8,6 +8,7 @@ import com.edubreeze.service.LoginService;
 import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
 import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
 import com.edubreeze.service.tasks.LoginTask;
+import com.edubreeze.utils.ExceptionTracker;
 import com.edubreeze.utils.Util;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -76,6 +77,7 @@ public class LoginController implements Initializable {
                 }
 
             } catch (SQLException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         AppConfiguration.CHECK_INITIAL_SYNC_ERROR_HEADER,
@@ -83,6 +85,7 @@ public class LoginController implements Initializable {
                 );
 
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         AppConfiguration.CHANGE_SCREEN_ERROR_HEADER,

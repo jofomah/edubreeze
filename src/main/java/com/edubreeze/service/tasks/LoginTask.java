@@ -6,6 +6,7 @@ import com.edubreeze.service.LoginService;
 import com.edubreeze.service.exceptions.LoginFailedException;
 import com.edubreeze.service.exceptions.MissingRequiredCredentialsException;
 import com.edubreeze.service.exceptions.WrongLoginCredentialsException;
+import com.edubreeze.utils.ExceptionTracker;
 import javafx.concurrent.Task;
 
 import java.sql.SQLException;
@@ -43,7 +44,7 @@ public class LoginTask extends Task<User> {
             loggedInUser = loginService.saveValidLogin(username, password, apiToken);
 
         } catch(ApiClientException ex) {
-
+            ExceptionTracker.track(ex);
             // API error, could be offline, try offline login
             loggedInUser = loginService.loginOffline(username, password);
 

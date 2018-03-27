@@ -1,12 +1,13 @@
 package com.edubreeze;
 
 import com.edubreeze.config.AppConfiguration;
-import com.edubreeze.controllers.HeaderController;
 import com.edubreeze.database.DatabaseConnectionInterface;
 import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.database.TableSchemaManager;
 import com.edubreeze.service.tasks.MonitorInternetConnectionTask;
+import com.edubreeze.utils.ExceptionTracker;
 import com.edubreeze.utils.Util;
+import io.sentry.Sentry;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -59,6 +60,10 @@ public class MainApp extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        /**
+         * Setup Sentry
+         */
+        setupSentry();
 
         try {
             DatabaseConnectionInterface dbConnection = new H2DatabaseConnection(AppConfiguration.getDatabaseFileUrl());
@@ -66,6 +71,8 @@ public class MainApp extends Application {
             tableSchemaManager.initDatabase(dbConnection);
 
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
+
             Util.showExceptionDialogBox(ex, "Database Setup Error", "An error occurred while initializing app database.");
         }
 
@@ -80,6 +87,8 @@ public class MainApp extends Application {
             launch(args);
 
         } catch (Exception ex) {
+            ExceptionTracker.track(ex);
+
             Util.showExceptionDialogBox(ex,
                     "App Launch Error",
                     "A runtime error occurred."
@@ -90,5 +99,9 @@ public class MainApp extends Application {
     private static void startNetworkMonitoringTask() {
         MonitorInternetConnectionTask networkTask = new MonitorInternetConnectionTask();
         networkTask.start();
+    }
+
+    private static void setupSentry() {
+        Sentry.init(AppConfiguration.SENTRY_DSN + "?buffer.dir=edubreeze-sentry&buffer.size=500");
     }
 }

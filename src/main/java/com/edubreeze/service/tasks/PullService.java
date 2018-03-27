@@ -9,6 +9,7 @@ import com.edubreeze.net.ApiClient;
 import com.edubreeze.net.exceptions.ApiClientException;
 import com.edubreeze.service.SyncService;
 import com.edubreeze.service.exceptions.SyncStillRunningException;
+import com.edubreeze.utils.ExceptionTracker;
 import com.j256.ormlite.misc.TransactionManager;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -69,7 +70,7 @@ public final class PullService extends Service<Integer> {
                                 // just to add little bit of delay
                                 Thread.sleep(delayThread);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                ExceptionTracker.track(ex);
                             }
                             JSONObject studentObject = studentArray.optJSONObject(studentIndex);
 
@@ -141,7 +142,7 @@ public final class PullService extends Service<Integer> {
                                     });
 
                         } catch (SQLException ex) {
-                            ex.printStackTrace();
+                            ExceptionTracker.track(ex);
                         } finally {
 
                             final int currentStudentIndex = (studentIndex + 1);
@@ -151,7 +152,7 @@ public final class PullService extends Service<Integer> {
                     }
 
                 } catch (ApiClientException ex) {
-                    ex.printStackTrace();
+                    ExceptionTracker.track(ex);
                 }
 
                 return getCount();

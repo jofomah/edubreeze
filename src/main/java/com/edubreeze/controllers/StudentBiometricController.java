@@ -11,6 +11,7 @@ import com.edubreeze.service.enrollment.EnrollmentActionListener;
 import com.edubreeze.service.enrollment.EnrollmentThread;
 import com.edubreeze.service.enrollment.FingerPrintEnrollment;
 import com.edubreeze.service.enrollment.ReaderStringConverter;
+import com.edubreeze.utils.ExceptionTracker;
 import com.edubreeze.utils.ImageUtil;
 import com.edubreeze.utils.Util;
 import com.edubreeze.utils.WebcamStringConverter;
@@ -114,6 +115,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             }
 
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Get Student Record for Edit Error", "An error occurred while trying to fetch student data been edited.");
         }
 
@@ -173,8 +175,8 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                                     stopCamera = true;
                                 });
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        } catch (Exception ex) {
+                            ExceptionTracker.track(ex);
                         }
 
                         return null;
@@ -206,6 +208,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             try {
                 Util.changeScreen((Stage) previousButton.getScene().getWindow(), AppConfiguration.STUDENT_ACADEMIC_PERFORMANCE_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
             }
         });
@@ -225,6 +228,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             try {
                 currentStudent.save(LoginService.getCurrentLoggedInUser());
             } catch (SQLException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         "Save Student Biometric Record Error",
@@ -236,6 +240,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             try {
                 Util.changeScreen((Stage) saveAndExitButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student biometric screen.");
             }
 
@@ -298,6 +303,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             try {
                 Util.changeScreen((Stage) gobackHomeButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student Biometric screen.");
             }
         });
@@ -329,6 +335,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                 );
 
             } catch(IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         "Load Student Image Error",
@@ -365,6 +372,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             try {
                 fpImageBytes = ImageUtil.convertToByteArray(ImageUtil.convertToBuffered(fingerprintImage));
             } catch(IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Fingerprint Image Conversion Error", "An Error Occurred while converting fingerpint image");
                 continue;
             }
@@ -407,6 +415,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             wasSet = true;
 
         } catch (IOException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Student Image Conversion Error", "An error occurred while converting student image");
         }
 
@@ -442,6 +451,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                         }
 
                     }  catch (UareUException ex) {
+                        ExceptionTracker.track(ex);
                         Util.showExceptionDialogBox(ex, "Open Fingerprint Reader Error", "Please, unplug fingerprint, plug back, refresh list and try again.");
                         return;
                     }
@@ -452,6 +462,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
                     try {
                         currentReader.Open(Reader.Priority.COOPERATIVE);
                     } catch (UareUException ex) {
+                        ExceptionTracker.track(ex);
                         Util.showExceptionDialogBox(ex, "Open Fingerprint Reader Error", "Please, unplug fingerprint, plug back, refresh list and try again.");
                         return;
                     }
@@ -509,6 +520,7 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
             fingerprintReadersComboBox.setItems(FXCollections.observableArrayList(readers));
 
         } catch (UareUException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Get Fingerprint Readers Error", "FingerPrintEnrollment.getReaders()");
         }
     }
@@ -579,8 +591,8 @@ public class StudentBiometricController implements Initializable, EnrollmentActi
 
                             Platform.runLater(() -> imageProperty.set(ref.get()));
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception ex) {
+                        ExceptionTracker.track(ex);
                     }
                 }
 

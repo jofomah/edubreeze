@@ -7,6 +7,7 @@ import com.edubreeze.net.ApiClient;
 import com.edubreeze.net.exceptions.ApiClientException;
 import com.edubreeze.service.ApplicationService;
 import com.edubreeze.service.LoginService;
+import com.edubreeze.utils.ExceptionTracker;
 import com.edubreeze.utils.Util;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -54,7 +55,7 @@ public class LoadingScreenController implements Initializable  {
                     return true;
 
                 } catch(ApiClientException ex) {
-                    System.out.println(ex.getMessage());
+                    ExceptionTracker.track(ex);
                 }
 
                 return false;

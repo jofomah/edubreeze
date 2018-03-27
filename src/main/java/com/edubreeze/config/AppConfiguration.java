@@ -44,6 +44,7 @@ public class AppConfiguration {
     public static final String UNKNOWN_NETWORK_STATUS_ICON = "/images/connection_unknown.png";
     public static final String CONNECTION_ON_ICON = "/images/connection_on.png";
     public static final String CONNECTION_OFF_ICON = "/images/connection_off.png";
+    public static final String SENTRY_DSN = "https://c5af2f7d700948379af50e526665501b:1bcbf7d8af894a7ba9d0f0af641dd1f8@sentry.io/681841";
 
     private static UUID currentStudentId;
     private static int currentSchoolId;

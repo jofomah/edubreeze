@@ -127,7 +127,7 @@ public class StudentListController implements Initializable {
             students.addAll(Student.getAll());
 
         } catch (Exception ex) {
-
+            ExceptionTracker.track(ex);
         }
 
         setPagination();
@@ -140,6 +140,7 @@ public class StudentListController implements Initializable {
                 AppConfiguration.setCurrentlyEditedStudentId(null);
                 Util.changeScreen((Stage) addStudentButton.getScene().getWindow(), AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Login screen.");
             }
         });
@@ -308,6 +309,7 @@ public class StudentListController implements Initializable {
                                             Util.showViewStudentData(student, viewStudentDataFXMLURL);
 
                                         } catch (SQLException ex) {
+                                            ExceptionTracker.track(ex);
                                             Util.showExceptionDialogBox(ex, "Get Student Record Error", "An error occurred while trying to fetch student.");
                                         }
                                     });
@@ -324,6 +326,7 @@ public class StudentListController implements Initializable {
                                                     AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN
                                             );
                                         } catch (IOException ex) {
+                                            ExceptionTracker.track(ex);
                                             Util.showInfo(
                                                     "Change Screen Error",
                                                     "Could not load student personal information screen",
@@ -414,6 +417,7 @@ public class StudentListController implements Initializable {
             students.clear();
             students.addAll(studentSearchResult);
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Search Student Data Error", "An error occurred while searching for student data");
         }
 
@@ -479,6 +483,7 @@ public class StudentListController implements Initializable {
             }
 
         } catch (SyncStillRunningException ex) {
+            ExceptionTracker.track(ex);
             resetPull(buttonText, buttonIcon);
 
             ex.printStackTrace();

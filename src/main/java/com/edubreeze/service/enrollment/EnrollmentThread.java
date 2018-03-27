@@ -1,6 +1,7 @@
 package com.edubreeze.service.enrollment;
 
 import com.digitalpersona.uareu.*;
+import com.edubreeze.utils.ExceptionTracker;
 import javafx.application.Platform;
 
 public class EnrollmentThread
@@ -79,9 +80,10 @@ public class EnrollmentThread
                         //send success
                         SendToListener(ACT_FEATURES, null, evt.capture_result, null, null);
 
-                    } catch (UareUException e) {
+                    } catch (UareUException ex) {
+                        ExceptionTracker.track(ex);
                         //send extraction error
-                        SendToListener(ACT_FEATURES, null, null, null, e);
+                        SendToListener(ACT_FEATURES, null, null, null, ex);
                     }
                 } else {
                     //send quality result
@@ -124,9 +126,9 @@ public class EnrollmentThread
                 //send result
                 if (null != fmd) {
                     Reader.CaptureResult captureResult = null;
-                    if(captureThread != null) {
+                    if (captureThread != null) {
                         CaptureThread.CaptureEvent evt = captureThread.getLastCaptureEvent();
-                        captureResult = (evt != null)? evt.capture_result: null;
+                        captureResult = (evt != null) ? evt.capture_result : null;
                     }
 
                     SendToListener(ACT_DONE, fmd, captureResult, null, null);
@@ -135,8 +137,9 @@ public class EnrollmentThread
                     break;
                 }
             }
-        } catch (UareUException e) {
-            SendToListener(ACT_DONE, null, null, null, e);
+        } catch (UareUException ex) {
+            ExceptionTracker.track(ex);
+            SendToListener(ACT_DONE, null, null, null, ex);
         }
     }
 }

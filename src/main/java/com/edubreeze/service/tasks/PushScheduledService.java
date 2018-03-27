@@ -7,6 +7,7 @@ import com.edubreeze.net.exceptions.ApiClientException;
 import com.edubreeze.service.SyncService;
 import com.edubreeze.service.exceptions.NullPushResultDataException;
 import com.edubreeze.service.exceptions.SyncStillRunningException;
+import com.edubreeze.utils.ExceptionTracker;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.concurrent.ScheduledService;
@@ -57,6 +58,9 @@ public class PushScheduledService extends ScheduledService<Integer> {
                 ApiClient apiClient = new ApiClient();
 
                 for (Student student : studentsDueForPush) {
+                    if (isCancelled()) {
+                        break;
+                    }
                     try {
 
                         JSONObject studentPayload = syncService.convertToStudentPayload(student);
@@ -99,7 +103,8 @@ public class PushScheduledService extends ScheduledService<Integer> {
                         updateProgress(count.get(), studentsDueForPush.size());
 
                     } catch (ApiClientException | NullPushResultDataException | MissingStudentDataException | SQLException ex) {
-                        ex.printStackTrace(System.out);
+                        ExceptionTracker.track(ex);
+                        ExceptionTracker.track(ex);
                         continue;
                     }
                 }

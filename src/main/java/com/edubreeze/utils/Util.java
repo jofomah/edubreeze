@@ -61,6 +61,7 @@ public class Util {
                 alert.showAndWait();
 
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 showExceptionDialogBox(ex, "View Student Data Error", "Could not show student data dialog");
             }
 
@@ -82,6 +83,7 @@ public class Util {
 
             academicRecordsTable.setItems(DataUtil.convertToAcademicRecordTableRowData(AcademicRecord.getByStudent(student)));
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             showExceptionDialogBox(ex, "Render Academic Table Error", ex.getMessage());
         }
 
@@ -95,6 +97,7 @@ public class Util {
             try {
                 studentImage = ImageUtil.convertToImage(studentImageBytes);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         "Convert Student Image Error",
@@ -115,6 +118,7 @@ public class Util {
             try {
                 fingerprintsImage.put(key, ImageUtil.convertToImage(studentFp.getFingerprintImageBytes()));
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(
                         ex,
                         "Convert Student Fingerprint Image Error",
@@ -343,6 +347,7 @@ public class Util {
             }
 
         } catch (Exception ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(
                     ex,
                     "School selection dialog box error",

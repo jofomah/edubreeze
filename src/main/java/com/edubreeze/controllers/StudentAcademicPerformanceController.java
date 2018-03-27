@@ -7,10 +7,7 @@ import com.edubreeze.model.StudentAcademicTerm;
 import com.edubreeze.model.properties.AcademicRecordProperty;
 import com.edubreeze.model.properties.StudentAcademicTermProperty;
 import com.edubreeze.service.LoginService;
-import com.edubreeze.utils.DataUtil;
-import com.edubreeze.utils.NumberStringFilteredConverter;
-import com.edubreeze.utils.StudentAcademicTermStringConverter;
-import com.edubreeze.utils.Util;
+import com.edubreeze.utils.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -143,6 +140,7 @@ public class StudentAcademicPerformanceController implements Initializable {
             loadStudentAcademicRecords();
 
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Get Student Record for Edit Error", "An error occurred while trying to fetch student data been edited.");
         }
 
@@ -157,6 +155,7 @@ public class StudentAcademicPerformanceController implements Initializable {
             try {
                 Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student Academic screen.");
             }
         });
@@ -171,6 +170,7 @@ public class StudentAcademicPerformanceController implements Initializable {
             try {
                 Util.changeScreen((Stage) previousSectionButton.getScene().getWindow(), AppConfiguration.STUDENT_PERSONAL_INFO_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student Academic screen.");
             }
         });
@@ -179,6 +179,7 @@ public class StudentAcademicPerformanceController implements Initializable {
             try {
                 Util.changeScreen((Stage) previousSectionButton.getScene().getWindow(), AppConfiguration.STUDENT_BIOMETRIC_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from Student Academic screen.");
             }
         });
@@ -200,7 +201,8 @@ public class StudentAcademicPerformanceController implements Initializable {
                 studentAcademicTerm.save(LoginService.getCurrentLoggedInUser());
                 clearAcademicTermFields();
                 loadStudentAcademicRecords();
-            }catch(SQLException ex) {
+            } catch (SQLException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Save Student Academic Term Error", ex.getMessage());
             }
         }else {
@@ -278,8 +280,10 @@ public class StudentAcademicPerformanceController implements Initializable {
             }
 
         } catch (NumberFormatException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Invalid Number Value", "Please enter only valid integers for C.A, Exams, Days Present and Days Absent.");
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Save Student Record Error", "An error occurred while trying to save student's academic data.");
         }
     }

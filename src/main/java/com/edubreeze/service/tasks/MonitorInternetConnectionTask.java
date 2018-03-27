@@ -16,7 +16,7 @@ public class MonitorInternetConnectionTask extends ScheduledService<Boolean> {
 
     @Override
     protected Task<Boolean> createTask() {
-        this.setPeriod(Duration.seconds(30));
+        this.setPeriod(Duration.seconds(10));
         this.setRestartOnFailure(true);
         this.setMaximumCumulativePeriod(Duration.minutes(5));
 
@@ -32,12 +32,14 @@ public class MonitorInternetConnectionTask extends ScheduledService<Boolean> {
                  */
                 InetAddress[] addresses = InetAddress.getAllByName(ApiClient.DOMAIN_NAME);
                 for (InetAddress address : addresses) {
+                    if (isCancelled()) {
+                        return isInternetAvailable;
+                    }
                     try {
                         if (address.isReachable(timeout)) {
                             isInternetAvailable = true;
                         }
                     } catch (IOException ex) {
-
                         isInternetAvailable = false;
 
                     } finally {

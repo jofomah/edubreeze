@@ -7,6 +7,7 @@ import com.edubreeze.service.LoginService;
 import com.edubreeze.service.exceptions.SyncStillRunningException;
 import com.edubreeze.service.tasks.MonitorInternetConnectionTask;
 import com.edubreeze.service.tasks.PushScheduledService;
+import com.edubreeze.utils.ExceptionTracker;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -113,7 +114,7 @@ public class HeaderController implements Initializable {
                     }
 
                 } catch (SQLException | SyncStillRunningException ex) {
-                    ex.printStackTrace();
+                    ExceptionTracker.track(ex);
                 }
             }
         });

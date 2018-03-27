@@ -144,6 +144,7 @@ public class StudentPersonalInfoController implements Initializable {
             schoolComboBox.getSelectionModel().select(0);
 
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting current selected school...");
         }
 
@@ -155,12 +156,14 @@ public class StudentPersonalInfoController implements Initializable {
             }
 
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Get Student Record for Edit Error", "An error occurred while trying to fetch student data been edited.");
         }
 
         try {
             stateOfOriginComboBox.setItems(FXCollections.observableList(State.getStates()));
         } catch (SQLException ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "SQL Error", "Error occurred while getting state list...");
         }
 
@@ -201,6 +204,7 @@ public class StudentPersonalInfoController implements Initializable {
             try {
                 Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_LIST_SCREEN);
             } catch (IOException ex) {
+                ExceptionTracker.track(ex);
                 Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
             }
         });
@@ -210,6 +214,7 @@ public class StudentPersonalInfoController implements Initializable {
                 try {
                     Util.changeScreen((Stage) cancelButton.getScene().getWindow(), AppConfiguration.STUDENT_ACADEMIC_PERFORMANCE_SCREEN);
                 } catch (IOException ex) {
+                    ExceptionTracker.track(ex);
                     Util.showExceptionDialogBox(ex, "Change Screen Error", "An error occurred while trying to change from StudentPersonalInfo.");
                 }
             } else {
@@ -318,6 +323,7 @@ public class StudentPersonalInfoController implements Initializable {
             }
 
         } catch (Exception ex) {
+            ExceptionTracker.track(ex);
             Util.showExceptionDialogBox(ex, "Save Student Record Error", "An error occurred while trying to save student data.");
         }
 

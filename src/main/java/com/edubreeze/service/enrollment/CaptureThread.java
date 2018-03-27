@@ -3,6 +3,7 @@ package com.edubreeze.service.enrollment;
 import com.digitalpersona.uareu.Fid;
 import com.digitalpersona.uareu.Reader;
 import com.digitalpersona.uareu.UareUException;
+import com.edubreeze.utils.ExceptionTracker;
 import javafx.application.Platform;
 
 public class CaptureThread extends Thread {
@@ -50,8 +51,8 @@ public class CaptureThread extends Thread {
     public void join(int milliseconds) {
         try {
             super.join(milliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ex) {
+            ExceptionTracker.track(ex);
         }
     }
 
@@ -69,8 +70,8 @@ public class CaptureThread extends Thread {
                     //if busy, wait a bit
                     try {
                         Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ex) {
+                        ExceptionTracker.track(ex);
                         break;
                     }
                 } else if (Reader.ReaderStatus.READY == rs.status || Reader.ReaderStatus.NEED_CALIBRATION == rs.status) {
@@ -95,8 +96,9 @@ public class CaptureThread extends Thread {
                 Reader.CaptureResult cr = fingerprintReader.Capture(imageFormat, imageProcessing, 500, -1);
                 NotifyListener(ACT_CAPTURE, cr, null, null);
             }
-        } catch (UareUException e) {
-            NotifyListener(ACT_CAPTURE, null, null, e);
+        } catch (UareUException ex) {
+            ExceptionTracker.track(ex);
+            NotifyListener(ACT_CAPTURE, null, null, ex);
         }
     }
 
@@ -110,8 +112,8 @@ public class CaptureThread extends Thread {
                     //if busy, wait a bit
                     try {
                         Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (InterruptedException ex) {
+                        ExceptionTracker.track(ex);
                         break;
                     }
                 } else if (Reader.ReaderStatus.READY == rs.status || Reader.ReaderStatus.NEED_CALIBRATION == rs.status) {
@@ -138,8 +140,9 @@ public class CaptureThread extends Thread {
                 //stop streaming
                 fingerprintReader.StopStreaming();
             }
-        } catch (UareUException e) {
-            NotifyListener(ACT_CAPTURE, null, null, e);
+        } catch (UareUException ex) {
+            ExceptionTracker.track(ex);
+            NotifyListener(ACT_CAPTURE, null, null, ex);
         }
 
         if (cancelled) {
@@ -163,8 +166,11 @@ public class CaptureThread extends Thread {
     public void cancel() {
         cancelled = true;
         try {
-            if (!shouldStream) fingerprintReader.CancelCapture();
-        } catch (UareUException e) {
+            if (!shouldStream) {
+                fingerprintReader.CancelCapture();
+            }
+        } catch (UareUException ex) {
+            ExceptionTracker.track(ex);
         }
     }
 

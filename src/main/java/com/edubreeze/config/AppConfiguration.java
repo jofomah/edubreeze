@@ -10,7 +10,7 @@ import java.util.*;
 
 public class AppConfiguration {
 
-    public static final String VERSION_NO = "1.5.0";
+    public static final String VERSION_NO = "1.5.1";
     public static final String DATE_PATTERN_DD_MM_YYYY = "dd/MM/yyyy";
     public static final String LOGIN_SCREEN_PATH = "/fxml/LoginScreen.fxml";
     public static final String MAIN_STYLESHEET_PATH = "/styles/Styles.css";

@@ -179,7 +179,7 @@ public class StudentAcademicTerm {
 
         QueryBuilder<StudentAcademicTerm, UUID> qb = studentAcademicTermDao.queryBuilder();
         qb.where()
-                .and().eq("student_id", this.getStudent().getAutoId())
+                .eq("student_id", this.getStudent().getAutoId())
                 .and().eq("year", this.getYear())
                 .and().eq("term", this.getTerm());
 

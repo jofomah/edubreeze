@@ -425,6 +425,7 @@ public class StudentListController implements Initializable {
     }
 
     private void resetPull(String buttonText, Node buttonIcon) {
+        pullSyncProgressBar.progressProperty().unbind();
         pullSyncProgressBar.setProgress(0);
         pullStudentButton.setDisable(false);
         pullStudentButton.setText(buttonText);

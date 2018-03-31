@@ -177,7 +177,7 @@ public class AcademicRecord {
          */
         QueryBuilder<AcademicRecord, UUID> qb = academicRecordDao.queryBuilder();
         qb.where()
-                .and().eq("academic_term_id", this.getAcademicTerm().getId())
+                .eq("academicTerm_id", this.getAcademicTerm().getId())
                 .and().eq("subject", this.getSubject());
 
         AcademicRecord temp = qb.queryForFirst();

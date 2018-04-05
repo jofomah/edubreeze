@@ -1,6 +1,7 @@
 package com.edubreeze.service;
 
 import com.edubreeze.model.*;
+import com.edubreeze.utils.DateUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -56,7 +57,7 @@ public class SyncService {
     private static final String UPDATED_BY_KEY = "updatedBy";
     private static final String UPDATED_AT_KEY = "updatedAt";
     private static final String CREATED_AT_KEY = "createdAt";
-
+    private static final int KATSINA_LGA_ID = 434;
 
     public AcademicRecord academicRecordFrom(StudentAcademicTerm academicTerm, JSONObject academicRecordObject) {
         AcademicRecord academicRecord = new AcademicRecord();
@@ -123,9 +124,12 @@ public class SyncService {
         String classSection = studentObject.optString(CLASS_SECTION_KEY);
         String classSectionType = studentObject.optString(CLASS_TYPE_KEY);
         Integer schoolId = studentObject.optInt(SCHOOL_ID_KEY);
-        Integer lgaId = studentObject.optInt(LGA_ID_KEY);
+        Integer lgaId = studentObject.optInt(LGA_ID_KEY, KATSINA_LGA_ID);
+        lgaId = (lgaId == 0)? KATSINA_LGA_ID : lgaId;
         Integer stateId = studentObject.optInt(STATE_ID_KEY);
-        Date dateOfBirth = new Date(studentObject.optLong(DATE_OF_BIRTH_KEY, 0));
+
+        Date dateOfBirth = DateUtil.getDateFromTimestampInSeconds(studentObject.optLong(DATE_OF_BIRTH_KEY));
+
         String dateEnrolled = studentObject.optString(DATE_ENROLLED_KEY);
         String contactPersonName = studentObject.optString(GUARDIAN_KEY);
         String contactPersonPhoneNumber = studentObject.optString(PHONE_KEY);
@@ -138,7 +142,9 @@ public class SyncService {
         String dateOfLeaving = studentObject.optString(DATE_OF_LEAVING_KEY);
         String causeOfLeaving = studentObject.optString(CAUSE_OF_LEAVING_KEY);
         String occupationAfterLeaving = studentObject.optString(OCCUPATION_AFTER_LEAVING_KEY);
-        Date lastSyncedAt = new Date(studentObject.optLong(SYNCED_AT_KEY, 0));
+
+        Date lastSyncedAt = DateUtil.getDateFromTimestampInSeconds(studentObject.optLong(SYNCED_AT_KEY, 0));
+
         byte[] studentImage = base64Decoding(studentObject.optString(PHOTO_KEY));
 
         Student student = new Student();
@@ -173,14 +179,10 @@ public class SyncService {
         student.setCreatedBy(studentObject.optString(CREATED_BY_KEY, "Not set"));
         student.setUpdatedBy(studentObject.optString(UPDATED_BY_KEY, "Not set"));
 
-        student.setUpdatedAt(new Date(studentObject.optLong(UPDATED_AT_KEY, 0)));
-        student.setCreatedAt(new Date(studentObject.optLong(CREATED_AT_KEY, 0)));
+        student.setUpdatedAt(DateUtil.getDateFromTimestampInSeconds(studentObject.optLong(UPDATED_AT_KEY, 0)));
+        student.setCreatedAt(DateUtil.getDateFromTimestampInSeconds(studentObject.optLong(CREATED_AT_KEY, 0)));
 
         return student;
-    }
-
-    public void pushStudentRecords(String apiToken, List<Student> studentsDueForPush) {
-
     }
 
     public JSONArray convertToFingerprintsPayload(List<StudentFingerprint> fingerprints) {
@@ -259,7 +261,7 @@ public class SyncService {
         studentPayload.put(ADMISSION_NO_KEY, student.getAdmissionNumber());
         studentPayload.put(FIRST_NAME_KEY, student.getFirstName());
         studentPayload.put(LAST_NAME_KEY, student.getLastName());
-        studentPayload.put(DATE_OF_BIRTH_KEY, student.getDateOfBirth().getTime());
+        studentPayload.put(DATE_OF_BIRTH_KEY, DateUtil.convertDateToSeconds(student.getDateOfBirth()));
         studentPayload.put(GENDER_KEY, student.getGender());
         studentPayload.put(CURRENT_CLASS_KEY, student.getCurrentClass());
         studentPayload.put(CLASS_CATEGORY_KEY, student.getClassCategory());

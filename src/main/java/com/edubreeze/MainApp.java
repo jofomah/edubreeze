@@ -5,9 +5,9 @@ import com.edubreeze.database.DatabaseConnectionInterface;
 import com.edubreeze.database.H2DatabaseConnection;
 import com.edubreeze.database.TableSchemaManager;
 import com.edubreeze.service.tasks.MonitorInternetConnectionTask;
+import com.edubreeze.utils.DateUtil;
 import com.edubreeze.utils.ExceptionTracker;
 import com.edubreeze.utils.Util;
-import io.sentry.Sentry;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -102,6 +102,15 @@ public class MainApp extends Application {
     }
 
     private static void setupSentry() {
-        Sentry.init(AppConfiguration.SENTRY_DSN + "?buffer.dir=edubreeze-sentry&buffer.size=500");
+        System.out.println("Date " + DateUtil.getDateFromTimestampInSeconds(0l));
+
+        //LocalDate date = Instant.ofEpochMilli(897868800000L / 1000).atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // Date date1 = Date.from( Instant.ofEpochSecond( 897868800000L ) );
+
+        // Date time = new Date(TimeUnit.MILLISECONDS.convert(897868800000L / 1000, TimeUnit.SECONDS));
+
+        // System.out.println("DOB " + date1.toString());
+        //Sentry.init(AppConfiguration.SENTRY_DSN + "?buffer.dir=edubreeze-sentry&buffer.size=500");
     }
 }

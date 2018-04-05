@@ -335,6 +335,14 @@ public class Student {
     }
 
     public boolean canSavePersonalInfo() {
+
+        System.out.println(
+                "Adm No: " + admissionNumber + "," +
+                "First Name: " + firstName + "," +
+                        "lastName " + lastName + "," + dateOfBirth + gender +  currentClass + classCategory + classSectionType + dateEnrolled +
+                        contactPersonAddress +    state + lga +    contactPersonName +       contactPersonPhoneNumber +  religion
+        );
+
         return (isValidString(admissionNumber) && isValidString(firstName) && isValidString(lastName) && dateOfBirth != null &&
                 isValidString(gender) && isValidString(currentClass) && isValidString(classCategory) && isValidString(classSectionType) &&
                 dateEnrolled != null && isValidString(contactPersonAddress) && state != null && lga != null && isValidString(contactPersonName) &&

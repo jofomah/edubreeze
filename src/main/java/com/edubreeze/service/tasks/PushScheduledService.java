@@ -8,10 +8,13 @@ import com.edubreeze.service.SyncService;
 import com.edubreeze.service.exceptions.NullPushResultDataException;
 import com.edubreeze.service.exceptions.SyncStillRunningException;
 import com.edubreeze.utils.ExceptionTracker;
+import com.edubreeze.utils.Util;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Service;
 import javafx.concurrent.Task;
+import javafx.scene.control.Label;
 import javafx.util.Duration;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,19 +26,20 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class PushScheduledService extends ScheduledService<Integer> {
+public class PushScheduledService extends Service<Integer> {
 
     private IntegerProperty count = new SimpleIntegerProperty();
-    private static PushScheduledService pushScheduledService;
 
     private List<Student> studentsDueForPush;
     private String apiToken;
 
-    private PushScheduledService(String apiToken, List<Student> students) {
+    public PushScheduledService(String apiToken, List<Student> students) {
         studentsDueForPush  = students;
         this.apiToken = apiToken;
+    }
 
-        setCount(0);
+    public PushScheduledService(String apiToken){
+        this.apiToken = apiToken;
     }
 
     public final void setCount(Integer value) {
@@ -54,13 +58,41 @@ public class PushScheduledService extends ScheduledService<Integer> {
         return new Task<Integer>() {
             protected Integer call() {
 
+                if(studentsDueForPush == null) {
+                    studentsDueForPush = new ArrayList<>();
+                    try {
+                        studentsDueForPush = Student.getAll(); //.getStudentsDueForSync();
+                    } catch (SQLException ex) {
+                        Util.showExceptionDialogBox(ex, "Get Students Due for Sync Error", ex.getMessage());
+                    }
+                }
+
+                // reset count
+                setCount(0);
+
                 SyncService syncService = new SyncService();
                 ApiClient apiClient = new ApiClient();
+
+                updateTitle("Push student records started...");
+
+                if(studentsDueForPush.size() == 0) {
+                    try {
+                        updateTitle("No record due for push.");
+                        Thread.sleep(5000);
+                    }catch(InterruptedException ex) {
+
+                    }
+
+                    return 0;
+                }
+
+                System.out.println(studentsDueForPush.size());
 
                 for (Student student : studentsDueForPush) {
                     if (isCancelled()) {
                         break;
                     }
+
                     try {
 
                         JSONObject studentPayload = syncService.convertToStudentPayload(student);
@@ -100,37 +132,18 @@ public class PushScheduledService extends ScheduledService<Integer> {
 
                         count.set(getCount() + 1);
 
+                        updateTitle("Pushed " + getCount() + " record{s) successfully");
+
                         updateProgress(count.get(), studentsDueForPush.size());
 
                     } catch (ApiClientException | NullPushResultDataException | MissingStudentDataException | SQLException ex) {
+                        System.out.println(ex.getMessage());
                         ExceptionTracker.track(ex);
-                        ExceptionTracker.track(ex);
-                        continue;
                     }
                 }
 
                 return getCount();
             }
         };
-    }
-
-    public static PushScheduledService getPushService(String apiToken, List<Student> studentsDueForSync) throws SyncStillRunningException {
-        if(pushScheduledService != null && pushScheduledService.isRunning()) {
-            throw new SyncStillRunningException("An existing sync is still running, try again later");
-        }
-
-        if(pushScheduledService == null) {
-            pushScheduledService = new PushScheduledService(apiToken, studentsDueForSync);
-
-            pushScheduledService.setRestartOnFailure(true);
-            pushScheduledService.setPeriod(Duration.minutes(5));
-            pushScheduledService.setMaximumCumulativePeriod(Duration.minutes(30));
-
-        } else {
-            pushScheduledService.apiToken = apiToken;
-            pushScheduledService.studentsDueForPush = studentsDueForSync;
-        }
-
-        return pushScheduledService;
     }
 }

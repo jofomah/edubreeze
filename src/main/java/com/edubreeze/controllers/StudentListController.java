@@ -8,7 +8,9 @@ import com.edubreeze.model.Student;
 import com.edubreeze.service.LoginService;
 import com.edubreeze.service.exceptions.SyncStillRunningException;
 import com.edubreeze.service.tasks.PullService;
+import com.edubreeze.service.tasks.PushScheduledService;
 import com.edubreeze.utils.*;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -74,6 +76,9 @@ public class StudentListController implements Initializable {
     @FXML
     private Button pullStudentButton;
 
+    @FXML
+    private Button pushStudentRecordButton;
+
     private List<Student> students = new ArrayList<>();
 
     private TableView studentListTableView = new TableView();
@@ -81,13 +86,26 @@ public class StudentListController implements Initializable {
     private final static int ROWS_PER_PAGE = 100;
 
     private final static float BUTTON_ICON_SIZE = 16;
+    private final static PushScheduledService pushService = new PushScheduledService(LoginService.getCurrentLoggedInUser().getApiToken());
 
     public void initialize(URL location, ResourceBundle resources) {
 
         PullService pullService = PullService.getPullService();
-        if(pullService != null) {
+        if (pullService != null) {
             pullSyncProgressBar.progressProperty().bind(pullService.progressProperty());
         }
+
+        pushService.titleProperty()
+                .addListener((observable1, oldValue, newValue) -> {
+                    Platform.runLater(() -> {
+                        if (newValue == null) {
+                            return;
+                        }
+                        System.out.println("Push title update " + newValue);
+
+                        HeaderController.appStatusTextProperty.set(newValue);
+                    });
+                });
 
         try {
             selectStateComboBox.setItems(FXCollections.observableList(State.getStates()));
@@ -117,6 +135,8 @@ public class StudentListController implements Initializable {
                     selectSchoolComboBox.getItems().clear();
                     return;
                 }
+
+                System.out.println("LGA name: " + selectedLga.getName() + ", ID: " + selectedLga.getId());
 
                 selectSchoolComboBox.setItems(FXCollections.observableList(new ArrayList<>(selectedLga.getSchools())));
             });
@@ -166,6 +186,13 @@ public class StudentListController implements Initializable {
         pullIV.setFitHeight(BUTTON_ICON_SIZE);
         pullIV.setSmooth(true);
         pullStudentButton.setGraphic(pullIV);
+
+        Image pushIcon = new Image(getClass().getResourceAsStream(AppConfiguration.PUSH_SYNC_ICON));
+        ImageView pushIV = new ImageView(pushIcon);
+        pushIV.setFitWidth(BUTTON_ICON_SIZE);
+        pushIV.setFitHeight(BUTTON_ICON_SIZE);
+        pushIV.setSmooth(true);
+        pushStudentRecordButton.setGraphic(pushIV);
     }
 
     private void initializeStudentTable() {
@@ -432,6 +459,40 @@ public class StudentListController implements Initializable {
         pullStudentButton.setGraphic(buttonIcon);
     }
 
+    public void pushStudentRecords(MouseEvent event) {
+
+        pushService.setOnSucceeded(result -> {
+            Integer recordsSynced = (Integer) result.getSource().getValue();
+            String updatedRecords = recordsSynced != null? recordsSynced.toString() : "Unknown";
+
+            Platform.runLater(() -> {
+                HeaderController.appStatusTextProperty.set("Pushed " + updatedRecords + " records successfully");
+            });
+        });
+
+        pushService.setOnRunning(status -> {
+            Platform.runLater(() -> {
+                HeaderController.appStatusTextProperty.set("Push students currently running");
+            });
+        });
+
+        pushService.setOnCancelled(status -> {
+            Platform.runLater(() -> {
+                HeaderController.appStatusTextProperty.set("Push students cancelled");
+            });
+        });
+
+        pushService.setOnFailed(state -> {
+            Platform.runLater(() -> {
+                HeaderController.appStatusTextProperty.set("Push students failed");
+            });
+        });
+
+        if(!pushService.isRunning()) {
+            pushService.start();
+        }
+    }
+
     public void fetchStudentsBySchool(ActionEvent event) {
         School school = selectSchoolComboBox.getSelectionModel().getSelectedItem();
         if (school == null) {
@@ -477,7 +538,7 @@ public class StudentListController implements Initializable {
 
             });
 
-            if(!pullService.isRunning()) {
+            if (!pullService.isRunning()) {
                 pullSyncProgressBar.progressProperty().unbind();
                 pullSyncProgressBar.progressProperty().bind(pullService.progressProperty());
                 pullService.restart();

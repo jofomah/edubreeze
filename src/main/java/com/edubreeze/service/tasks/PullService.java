@@ -60,6 +60,7 @@ public final class PullService extends Service<Integer> {
                 try {
                     JSONArray studentArray = apiClient.getStudentsBySchool(instance.apiToken, instance.schoolId);
                     int studentSize = studentArray.length();
+                    System.out.println("Student Size : " + studentSize);
 
                     for (int studentIndex = 0; studentIndex < studentSize; studentIndex++) {
                         if(isCancelled()) {
@@ -74,12 +75,16 @@ public final class PullService extends Service<Integer> {
                             }
                             JSONObject studentObject = studentArray.optJSONObject(studentIndex);
 
+                            System.out.println(studentObject);
+
                             Student student = syncService.studentFrom(studentObject);
 
                             TransactionManager.callInTransaction(
                                     DatabaseHelper.getDatabaseConnection().getConnectionSource(),
                                     new Callable<Boolean>() {
                                         public Boolean call() throws Exception {
+
+                                            System.out.println("Can Save Student : " + student.canSavePersonalInfo());
 
                                             if (student.canSavePersonalInfo()) {
                                                 /**
@@ -142,6 +147,7 @@ public final class PullService extends Service<Integer> {
                                     });
 
                         } catch (SQLException ex) {
+                            ex.printStackTrace();
                             ExceptionTracker.track(ex);
                         } finally {
 
